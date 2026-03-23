@@ -1,0 +1,2851 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteBuddy Food Delivery | AI Powered</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        macho: {
+                            orange: '#fc8019',
+                            dark: '#ffffff',
+                            gray: '#a9abb3',
+                            bg: '#0f1115'
+                        }
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Global Dark Grid Pattern */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f1115;
+            color: #ffffff;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f1115;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c81d77;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6b00;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .glass-panel {
+            background: rgba(15, 17, 21, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Veg/Non-Veg Icons */
+        .veg-icon {
+            border: 1px solid #22c55e;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+        }
+
+        .veg-icon::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+        }
+
+        .nonveg-icon {
+            border: 1px solid #ef4444;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+        }
+
+        .nonveg-icon::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+    </style>
+</head>
+
+<body class="text-white antialiased relative">
+
+    <!-- Navigation (Dark Mode Style) -->
+    <nav
+        class="fixed w-full z-50 bg-[#0f1115]/90 backdrop-blur-md text-gray-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-b border-gray-800 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-4 lg:gap-6">
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button onclick="toggleMobileMenu()"
+                        class="lg:hidden text-gray-300 hover:text-macho-orange transition-colors">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Logo (Navigates to Home Landing) -->
+                    <div class="flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform"
+                        onclick="goHome()">
+                        <!-- Custom Interlocking BB SVG Logo -->
+                        <svg class="w-8 h-8 lg:w-10 lg:h-10" viewBox="0 0 40 40" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 10H16C18.2091 10 20 11.7909 20 14C20 15.4206 19.2599 16.668 18.1396 17.3392C19.7828 18.0673 21 19.6757 21 21.5C21 23.9853 18.9853 26 16.5 26H10V10Z"
+                                stroke="url(#bb-grad-1)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M10 17.5H17.5" stroke="url(#bb-grad-1)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <path
+                                d="M18 14H24C26.2091 14 28 15.7909 28 18C28 19.4206 27.2599 20.668 26.1396 21.3392C27.7828 22.0673 29 23.6757 29 25.5C29 27.9853 26.9853 30 24.5 30H18V14Z"
+                                stroke="url(#bb-grad-2)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M18 21.5H25.5" stroke="url(#bb-grad-2)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="bb-grad-1" x1="10" y1="10" x2="21" y2="26"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ff6b00" />
+                                    <stop offset="100%" stop-color="#c81d77" />
+                                </linearGradient>
+                                <linearGradient id="bb-grad-2" x1="18" y1="14" x2="29" y2="30"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#c81d77" />
+                                    <stop offset="100%" stop-color="#00f2fe" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span class="text-xl lg:text-2xl font-extrabold tracking-tight"><span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">Byte</span><span
+                                class="text-white">Buddy</span></span>
+                    </div>
+                    <!-- Location Selector -->
+                    <div class="hidden md:flex items-center gap-2 text-sm cursor-pointer group mt-1">
+                        <span
+                            class="font-bold text-white border-b-2 border-white group-hover:text-macho-orange group-hover:border-macho-orange transition-colors">Other</span>
+                        <span class="text-gray-400 truncate max-w-[200px] lg:max-w-[250px]"
+                            id="user-zone">Buchireddypalem, Nellore</span>
+                        <svg class="w-4 h-4 text-macho-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-5 lg:gap-8 text-[15px] font-medium text-gray-300">
+                    <!-- Mobile Search Icon -->
+                    <button onclick="openRegularSearch()" class="lg:hidden hover:text-macho-orange transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    <!-- Desktop Regular Search Link -->
+                    <button onclick="openRegularSearch()"
+                        class="hidden lg:flex items-center gap-2 hover:text-macho-orange transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Search
+                    </button>
+                    <!-- Desktop Offers Link -->
+                    <button onclick="openOffersView()"
+                        class="hidden lg:flex items-center gap-2 hover:text-macho-orange transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7">
+                            </path>
+                        </svg>
+                        Offers <sup class="text-macho-orange text-[10px] font-bold">HOT</sup>
+                    </button>
+                    <button id="auth-btn" onclick="handleUserAction()"
+                        class="hidden lg:flex items-center gap-2 hover:text-macho-orange transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span id="auth-text">Sign In</span>
+                    </button>
+                    <div class="relative cursor-pointer hover:text-macho-orange transition-colors flex items-center gap-2 font-bold text-white"
+                        onclick="toggleCart()">
+                        <span class="relative">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                            <span id="cart-count"
+                                class="absolute -top-1.5 -right-1.5 bg-macho-orange text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow-[0_0_10px_rgba(252,128,25,0.5)]">0</span>
+                        </span>
+                        <span class="hidden md:inline">Cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu-backdrop"
+        class="fixed inset-0 bg-[#0f1115]/80 backdrop-blur-sm z-[110] hidden transition-opacity duration-300 opacity-0"
+        onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu-drawer"
+        class="fixed top-0 left-0 h-full w-[280px] bg-[#12141d] shadow-[10px_0_30px_rgba(0,0,0,0.8)] z-[120] transform -translate-x-full transition-transform duration-300 flex flex-col border-r border-gray-800 lg:hidden">
+        <div
+            class="p-6 border-b border-gray-800 flex justify-between items-center bg-gradient-to-r from-[#12141d] to-[#1a1c23]">
+            <span class="text-2xl font-extrabold tracking-tight"><span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">Byte</span><span
+                    class="text-white">Buddy</span></span>
+            <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div class="flex-grow p-6 space-y-2">
+            <button id="mobile-auth-btn" onclick="handleMobileUserAction()"
+                class="w-full flex items-center gap-3 p-4 rounded-xl bg-[#1a1c23] border border-gray-700 text-white font-bold hover:border-[#c81d77] transition-all">
+                <svg class="w-6 h-6 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span id="mobile-auth-text">Sign In</span>
+            </button>
+            <div class="h-px bg-gray-800 my-4"></div>
+            <button onclick="toggleMobileMenu(); openRegularSearch();"
+                class="w-full flex items-center gap-3 p-4 text-gray-300 font-bold hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                Search
+            </button>
+            <button onclick="toggleMobileMenu(); openOffersView();"
+                class="w-full flex items-center gap-3 p-4 text-gray-300 font-bold hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7">
+                    </path>
+                </svg>
+                Offers <sup class="text-macho-orange text-[10px] font-bold ml-1">HOT</sup>
+            </button>
+        </div>
+    </div>
+
+    <!-- Regular Search Modal (For Items & Restaurants) -->
+    <div id="regular-search-modal"
+        class="fixed inset-0 bg-[#0f1115]/95 backdrop-blur-xl z-[150] hidden flex-col items-center pt-24 px-4 opacity-0 transition-opacity duration-300">
+        <div class="w-full max-w-3xl relative">
+            <button onclick="closeRegularSearch()"
+                class="absolute -top-12 right-0 text-gray-400 hover:text-white transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <div
+                class="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-gray-700 to-gray-600 focus-within:from-[#ff6b00] focus-within:to-[#c81d77] transition-all shadow-2xl">
+                <div class="bg-[#12141d] rounded-2xl flex items-center px-4 py-4">
+                    <svg class="text-gray-400 w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="regular-search-input" oninput="handleLiveSearch(event)"
+                        placeholder="Search for restaurants, cuisines, or specific dishes..."
+                        class="bg-transparent w-full outline-none text-white text-lg md:text-xl placeholder-gray-500 font-medium">
+                </div>
+            </div>
+            <!-- Live Search Results Dropdown -->
+            <div id="live-search-results"
+                class="mt-4 bg-[#12141d] border border-gray-800 rounded-2xl shadow-2xl hidden flex-col overflow-hidden max-h-[60vh] overflow-y-auto scrollbar-hide">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HOME LANDING SECTION -->
+    <section id="home-landing-section"
+        class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen transition-opacity duration-300">
+        <!-- Dynamic Time/Offer Banner -->
+        <div
+            class="relative w-full h-40 md:h-64 rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(252,128,25,0.15)] mb-8 cursor-pointer group border border-gray-800">
+            <img id="banner-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1000&fit=crop"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0f1115] via-[#0f1115]/80 to-transparent"></div>
+            <div class="absolute inset-0 p-6 md:p-10 flex flex-col justify-center">
+                <span
+                    class="bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded w-max mb-3 uppercase tracking-wider animate-pulse">Live
+                    Offer</span>
+                <h2 id="banner-title" class="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">Late Night
+                    Cravings? 🌙</h2>
+                <p id="banner-subtitle" class="text-[#00f2fe] text-sm md:text-lg font-medium drop-shadow-md">Order now
+                    and get 20% off on all midnight snacks.</p>
+            </div>
+        </div>
+
+        <!-- Service Categories Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            <!-- Food Card -->
+            <div onclick="openFoodView()"
+                class="col-span-2 md:col-span-1 bg-[#1a1c23] border border-gray-800 rounded-3xl p-5 md:p-6 relative overflow-hidden group cursor-pointer hover:border-[#ff6b00] hover:shadow-[0_0_30px_rgba(252,128,25,0.2)] transition-all min-h-[160px] md:min-h-[220px]">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] blur opacity-0 group-hover:opacity-20 transition duration-500">
+                </div>
+                <h3 class="text-2xl md:text-3xl font-black text-white relative z-10 tracking-tight">FOOD</h3>
+                <p class="text-[11px] md:text-xs text-gray-400 font-bold tracking-widest relative z-10 mb-4 uppercase">
+                    Food You Love ❤️</p>
+                <span
+                    class="bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white text-[10px] md:text-[11px] font-extrabold px-3 py-1 rounded-full relative z-10 shadow-lg">UPTO
+                    50% OFF</span>
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop"
+                    class="absolute -bottom-6 -right-6 w-32 h-32 md:w-44 md:h-44 object-cover rounded-full transform group-hover:scale-110 transition-transform duration-300 drop-shadow-2xl border-4 border-[#1a1c23]">
+            </div>
+
+            <!-- BuddyMart Card -->
+            <div onclick="openBuddyMart()"
+                class="col-span-1 bg-[#1a1c23] border border-gray-800 rounded-3xl p-5 md:p-6 relative overflow-hidden group cursor-pointer hover:border-[#00f2fe] hover:shadow-[0_0_30px_rgba(0,242,254,0.15)] transition-all min-h-[160px] md:min-h-[220px]">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-[#00f2fe] to-[#4facfe] blur opacity-0 group-hover:opacity-20 transition duration-500">
+                </div>
+                <h3 class="text-xl md:text-2xl font-black text-white relative z-10 tracking-tight">BUDDYMART</h3>
+                <p class="text-[10px] md:text-xs text-gray-400 font-bold tracking-widest relative z-10 mb-4 uppercase">
+                    Instant Grocery 🥬</p>
+                <span
+                    class="bg-gradient-to-r from-[#00f2fe] to-[#4facfe] text-[#12141d] text-[10px] md:text-[11px] font-extrabold px-3 py-1 rounded-full relative z-10 shadow-lg">IN
+                    10 MINS</span>
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&h=200&fit=crop"
+                    class="absolute -bottom-2 -right-4 w-28 h-28 md:w-36 md:h-36 object-cover transform group-hover:-translate-y-2 group-hover:-translate-x-2 transition-transform duration-300 drop-shadow-2xl opacity-90 group-hover:opacity-100 rounded-tl-2xl">
+            </div>
+
+            <!-- Buddy Go Card -->
+            <div onclick="openBuddyGo()"
+                class="col-span-1 bg-[#1a1c23] border border-gray-800 rounded-3xl p-5 md:p-6 relative overflow-hidden group cursor-pointer hover:border-[#c81d77] hover:shadow-[0_0_30px_rgba(200,29,119,0.15)] transition-all min-h-[160px] md:min-h-[220px]">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-[#c81d77] to-[#ff6b00] blur opacity-0 group-hover:opacity-20 transition duration-500">
+                </div>
+                <h3 class="text-xl md:text-2xl font-black text-white relative z-10 tracking-tight">BUDDY GO</h3>
+                <p class="text-[10px] md:text-xs text-gray-400 font-bold tracking-widest relative z-10 mb-4 uppercase">
+                    Pick Up & Drop 📦</p>
+                <span
+                    class="bg-gradient-to-r from-[#c81d77] to-[#ff6b00] text-white text-[10px] md:text-[11px] font-extrabold px-3 py-1 rounded-full relative z-10 shadow-lg">ANYWHERE</span>
+                <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=200&h=200&fit=crop"
+                    class="absolute -bottom-4 -right-4 w-24 h-24 md:w-36 md:h-36 object-cover transform group-hover:-translate-y-2 group-hover:-translate-x-2 transition-transform duration-300 drop-shadow-2xl opacity-90 group-hover:opacity-100 rounded-full">
+            </div>
+        </div>
+    </section>
+
+    <!-- WRAPPER: Main Food Delivery Section -->
+    <div id="main-food-view" class="hidden opacity-0 transition-opacity duration-300">
+        <section id="ai-hero-section"
+            class="relative pt-24 pb-12 text-white overflow-hidden flex flex-col justify-center border-b border-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
+
+                <!-- NEW: Back Button for Food View -->
+                <div class="flex justify-start w-full mb-4">
+                    <button onclick="goHome()"
+                        class="text-gray-400 hover:text-white flex items-center gap-2 transition-colors font-bold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
+                <div class="flex flex-col items-center justify-center mb-8">
+                    <div class="flex items-center justify-center gap-4 md:gap-5 mb-2">
+                        <svg class="w-16 h-16 md:w-20 md:h-20" viewBox="0 0 40 40" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 10H16C18.2091 10 20 11.7909 20 14C20 15.4206 19.2599 16.668 18.1396 17.3392C19.7828 18.0673 21 19.6757 21 21.5C21 23.9853 18.9853 26 16.5 26H10V10Z"
+                                stroke="url(#bb-hero-1)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M10 17.5H17.5" stroke="url(#bb-hero-1)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <path
+                                d="M18 14H24C26.2091 14 28 15.7909 28 18C28 19.4206 27.2599 20.668 26.1396 21.3392C27.7828 22.0673 29 23.6757 29 25.5C29 27.9853 26.9853 30 24.5 30H18V14Z"
+                                stroke="url(#bb-hero-2)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M18 21.5H25.5" stroke="url(#bb-hero-2)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="bb-hero-1" x1="10" y1="10" x2="21" y2="26"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ff6b00" />
+                                    <stop offset="100%" stop-color="#c81d77" />
+                                </linearGradient>
+                                <linearGradient id="bb-hero-2" x1="18" y1="14" x2="29" y2="30"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#c81d77" />
+                                    <stop offset="100%" stop-color="#00f2fe" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <h1
+                            class="text-5xl md:text-7xl font-black tracking-tighter drop-shadow-[0_0_20px_rgba(200,29,119,0.5)]">
+                            <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">Byte</span><span
+                                class="text-white">Buddy</span>
+                        </h1>
+                    </div>
+                    <p
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-[#00f2fe] via-[#c81d77] to-[#ff6b00] text-base md:text-xl font-bold tracking-wide drop-shadow-sm">
+                        Delicious bites that turn every mood into a moment of joy.
+                    </p>
+                </div>
+
+                <form id="ai-search-form" class="relative w-full max-w-4xl mx-auto z-20 group">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500">
+                    </div>
+                    <div
+                        class="relative rounded-full p-[1.5px] bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe]">
+                        <div class="bg-[#12141d] rounded-full flex items-center px-4 py-3 md:px-6 md:py-4">
+                            <svg class="text-white/60 w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                                </path>
+                            </svg>
+                            <input type="text" id="ai-input"
+                                class="bg-transparent w-full outline-none text-white placeholder-white/40 font-medium text-[15px] md:text-[17px]"
+                                placeholder="I'm feeling exhausted and need something spicy to wake me up...">
+                            <button type="submit" class="bg-transparent focus:outline-none flex-shrink-0">
+                                <svg class="text-[#fc8019] w-6 h-6 ml-2 hover:scale-110 transition-transform cursor-pointer"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="flex flex-wrap justify-center gap-3 mt-6">
+                    <button type="button"
+                        class="quick-tag px-4 py-1.5 rounded-full border border-red-500/50 bg-red-500/10 text-red-500 text-xs font-semibold hover:bg-red-500/20 hover:scale-105 transition-all shadow-[0_0_10px_rgba(239,68,68,0.2)]">#Hangry</button>
+                    <button type="button"
+                        class="quick-tag px-4 py-1.5 rounded-full border border-green-500/50 bg-green-500/10 text-green-500 text-xs font-semibold hover:bg-green-500/20 hover:scale-105 transition-all shadow-[0_0_10px_rgba(34,197,94,0.2)]">#PostGym</button>
+                    <button type="button"
+                        class="quick-tag px-4 py-1.5 rounded-full border border-purple-500/50 bg-purple-500/10 text-purple-400 text-xs font-semibold hover:bg-purple-500/20 hover:scale-105 transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)]">#BreakupComfort</button>
+                    <button type="button"
+                        class="quick-tag px-4 py-1.5 rounded-full border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 text-xs font-semibold hover:bg-yellow-500/20 hover:scale-105 transition-all shadow-[0_0_10px_rgba(234,179,8,0.2)]">#Win</button>
+                </div>
+
+                <div id="ai-results-container" class="mt-10 w-full max-w-5xl mx-auto hidden flex-col items-center">
+                    <p id="ai-thinking-text" class="text-[#00f2fe] font-medium mb-6 animate-pulse hidden">Extracting the
+                        perfect vibe...</p>
+                    <div id="ai-response-message"
+                        class="hidden w-full max-w-3xl text-left bg-[#1a1c23]/90 border-l-4 border-[#c81d77] p-5 md:p-6 rounded-r-2xl rounded-l-md shadow-[0_0_20px_rgba(200,29,119,0.15)] backdrop-blur-md mb-8 animate-fade-in text-gray-200 text-[15px] md:text-[16px] font-medium leading-relaxed tracking-wide">
+                    </div>
+                    <div id="ai-cards-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full"></div>
+                    <button onclick="document.getElementById('menu-section').scrollIntoView({ behavior: 'smooth' })"
+                        class="mt-8 bg-gradient-to-r from-[#ff4b1f] to-[#fc8019] text-white font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(252,128,25,0.4)] hover:scale-105 transition-transform uppercase text-sm flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        View All Restaurants
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="categories-section"
+            class="pt-8 pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-white">What's on your mind?</h2>
+            </div>
+            <div class="flex overflow-x-auto gap-6 md:gap-8 pb-4 scrollbar-hide">
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('Biryani')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="Biryani">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">Biryani</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('Pizza')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="Pizza">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">Pizza</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('Burger')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="Burger">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">Burger</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('South Indian')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="South Indian">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">South
+                        Indian</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('Chinese')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1626779848525-4521408b07ed?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="Chinese">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">Chinese</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 group"
+                    onclick="filterByCategory('Ice Cream')">
+                    <div
+                        class="relative w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full p-[2px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#ff6b00] group-hover:via-[#c81d77] group-hover:to-[#00f2fe] transition-all duration-300">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500">
+                        </div>
+                        <div class="w-full h-full rounded-full overflow-hidden bg-[#12141d] relative z-10">
+                            <img src="https://images.unsplash.com/photo-1559703248-dcaaec9fac92?w=250&h=250&fit=crop"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                alt="Dessert">
+                        </div>
+                    </div>
+                    <span
+                        class="font-semibold text-gray-300 text-sm md:text-[15px] group-hover:text-white transition-colors">Ice
+                        Creams</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu-section" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white" id="menu-title">Restaurants with online food
+                        delivery in Buchireddypalem, Nellore</h2>
+                </div>
+                <button onclick="resetMenu()" class="text-sm font-bold text-macho-orange hover:text-[#e06c11] hidden"
+                    id="reset-filter-btn">
+                    Clear Filters
+                </button>
+            </div>
+            <div id="food-grid"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-8 md:gap-y-12"></div>
+
+            <div id="empty-state" class="hidden text-center py-20">
+                <div
+                    class="inline-flex justify-center items-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-800 text-gray-500 mb-4 shadow-inner">
+                    <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg md:text-xl font-bold text-white mb-2">No matching restaurants found</h3>
+                <p class="text-gray-400 text-sm md:text-[15px]">ByteBuddy AI couldn't find exactly what you asked for.
+                    Try another search!</p>
+                <button onclick="resetMenu()"
+                    class="mt-6 px-6 py-2.5 bg-macho-orange text-white font-bold rounded hover:bg-[#e06c11] transition-colors shadow-[0_0_15px_rgba(252,128,25,0.4)]">Show
+                    All Restaurants</button>
+            </div>
+        </section>
+    </div> <!-- END Main Food View -->
+
+    <!-- Dedicated Restaurant Menu View -->
+    <section id="restaurant-view-section"
+        class="hidden py-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-300 opacity-0 min-h-screen">
+        <button onclick="closeRestaurant()"
+            class="text-gray-400 hover:text-white flex items-center gap-2 mb-6 transition-colors font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Restaurants
+        </button>
+
+        <div
+            class="bg-[#12141d] border border-gray-800 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 shadow-xl relative overflow-hidden group">
+            <div
+                class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-500 z-0">
+            </div>
+            <div class="relative z-10 w-full flex flex-col md:flex-row justify-between">
+                <div>
+                    <h2 class="text-2xl md:text-4xl font-black text-white mb-2 tracking-tight" id="rest-view-name">
+                        Restaurant Name</h2>
+                    <p class="text-gray-400 text-xs md:text-base mb-4" id="rest-view-cuisines">Cuisines</p>
+                    <div class="flex items-center gap-4 text-xs md:text-sm font-bold">
+                        <div class="flex items-center gap-1 bg-gray-800 px-3 py-1.5 rounded-lg text-white">
+                            <svg class="w-4 h-4 text-[#48c479]" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                                </path>
+                            </svg>
+                            <span id="rest-view-rating">4.5</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-gray-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="rest-view-time">30 mins</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 md:gap-4 mb-8 border-b border-gray-800 pb-4">
+            <span class="font-bold text-gray-300 text-sm md:text-lg w-full md:w-auto mb-2 md:mb-0">Filter:</span>
+            <button onclick="applyFoodFilter('all')" id="filter-all"
+                class="px-4 py-2 rounded-full font-bold text-xs md:text-sm bg-gray-800 text-white transition-colors border border-transparent">All</button>
+            <button onclick="applyFoodFilter('veg')" id="filter-veg"
+                class="px-4 py-2 rounded-full font-bold text-xs md:text-sm bg-transparent text-gray-400 border border-gray-700 hover:border-[#22c55e] hover:text-[#22c55e] transition-colors flex items-center gap-2">
+                <span class="veg-icon"></span> Veg Only
+            </button>
+            <button onclick="applyFoodFilter('nonveg')" id="filter-nonveg"
+                class="px-4 py-2 rounded-full font-bold text-xs md:text-sm bg-transparent text-gray-400 border border-gray-700 hover:border-[#ef4444] hover:text-[#ef4444] transition-colors flex items-center gap-2">
+                <span class="nonveg-icon"></span> Non-Veg Only
+            </button>
+        </div>
+
+        <div id="rest-menu-container" class="space-y-10"></div>
+    </section>
+
+    <!-- NEW: Offers View Section -->
+    <section id="offers-view-section"
+        class="hidden py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-300 opacity-0 min-h-screen">
+        <button onclick="goHome()"
+            class="text-gray-400 hover:text-white flex items-center gap-2 mb-6 transition-colors font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Home
+        </button>
+
+        <div class="mb-10">
+            <h2
+                class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77] mb-2 tracking-tight">
+                Today's Offers</h2>
+            <p class="text-gray-300 font-medium">Daily deals, discounts, and exclusive coupons for Buchireddypalem.</p>
+        </div>
+
+        <!-- Coupons Section -->
+        <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#00f2fe]" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm4.707 3.707a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L8.414 9H14a1 1 0 100-2H8.414l1.293-1.293z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            Available Coupons
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mb-14">
+            <!-- Coupon 1 -->
+            <div
+                class="bg-[#1a1c23] border border-dashed border-[#00f2fe] rounded-xl p-5 flex items-center justify-between shadow-[0_0_15px_rgba(0,242,254,0.1)]">
+                <div>
+                    <span class="text-[#00f2fe] font-black text-xl md:text-2xl tracking-wider">BYTE50</span>
+                    <p class="text-xs md:text-sm text-gray-400 mt-1">Get flat ₹50 OFF on your order</p>
+                </div>
+                <button onclick="copyCoupon('BYTE50')"
+                    class="text-xs bg-[#00f2fe]/10 text-[#00f2fe] px-4 py-2 rounded-lg font-bold hover:bg-[#00f2fe]/20 transition-colors">COPY</button>
+            </div>
+            <!-- Coupon 2 -->
+            <div
+                class="bg-[#1a1c23] border border-dashed border-[#48c479] rounded-xl p-5 flex items-center justify-between shadow-[0_0_15px_rgba(72,196,121,0.1)]">
+                <div>
+                    <span class="text-[#48c479] font-black text-xl md:text-2xl tracking-wider">WELCOME20</span>
+                    <p class="text-xs md:text-sm text-gray-400 mt-1">Get 20% OFF on your subtotal</p>
+                </div>
+                <button onclick="copyCoupon('WELCOME20')"
+                    class="text-xs bg-[#48c479]/10 text-[#48c479] px-4 py-2 rounded-lg font-bold hover:bg-[#48c479]/20 transition-colors">COPY</button>
+            </div>
+            <!-- Coupon 3 -->
+            <div
+                class="bg-[#1a1c23] border border-dashed border-[#ff6b00] rounded-xl p-5 flex items-center justify-between shadow-[0_0_15px_rgba(252,128,25,0.1)]">
+                <div>
+                    <span class="text-[#ff6b00] font-black text-xl md:text-2xl tracking-wider">BUCHISPECIAL</span>
+                    <p class="text-xs md:text-sm text-gray-400 mt-1">Free Delivery in Buchireddypalem</p>
+                </div>
+                <button onclick="copyCoupon('BUCHISPECIAL')"
+                    class="text-xs bg-[#ff6b00]/10 text-[#ff6b00] px-4 py-2 rounded-lg font-bold hover:bg-[#ff6b00]/20 transition-colors">COPY</button>
+            </div>
+        </div>
+
+        <!-- Daily Deals Section -->
+        <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#c81d77]" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            Daily Restaurant Deals
+        </h3>
+        <div id="offers-grid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-8 md:gap-y-12">
+            <!-- JS populated with discounted restaurants -->
+        </div>
+    </section>
+
+    <!-- NEW: BuddyMart View -->
+    <section id="buddymart-view-section"
+        class="hidden py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-300 opacity-0 min-h-screen">
+        <button onclick="goHome()"
+            class="text-gray-400 hover:text-white flex items-center gap-2 mb-6 transition-colors font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Home
+        </button>
+
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2
+                    class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00f2fe] to-[#4facfe] mb-2 tracking-tight">
+                    BuddyMart</h2>
+                <p class="text-gray-400 font-medium">Groceries and essentials delivered in 10 minutes to
+                    Buchireddypalem.</p>
+            </div>
+        </div>
+
+        <div class="flex overflow-x-auto gap-4 pb-6 scrollbar-hide border-b border-gray-800"
+            id="mart-categories-container">
+            <button onclick="renderMartItems('All')"
+                class="mart-cat-btn active px-6 py-2.5 rounded-full font-bold text-sm bg-[#00f2fe]/20 text-[#00f2fe] border border-[#00f2fe]/50 whitespace-nowrap">All</button>
+            <button onclick="renderMartItems('Fresh Vegetables')"
+                class="mart-cat-btn px-6 py-2.5 rounded-full font-bold text-sm bg-gray-800 text-gray-400 hover:text-white transition-colors whitespace-nowrap">Fresh
+                Vegetables</button>
+            <button onclick="renderMartItems('Fruits')"
+                class="mart-cat-btn px-6 py-2.5 rounded-full font-bold text-sm bg-gray-800 text-gray-400 hover:text-white transition-colors whitespace-nowrap">Fruits</button>
+            <button onclick="renderMartItems('Dairy & Bakery')"
+                class="mart-cat-btn px-6 py-2.5 rounded-full font-bold text-sm bg-gray-800 text-gray-400 hover:text-white transition-colors whitespace-nowrap">Dairy
+                & Bakery</button>
+            <button onclick="renderMartItems('Snacks & Beverages')"
+                class="mart-cat-btn px-6 py-2.5 rounded-full font-bold text-sm bg-gray-800 text-gray-400 hover:text-white transition-colors whitespace-nowrap">Snacks
+                & Beverages</button>
+        </div>
+
+        <div id="mart-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mt-8"></div>
+    </section>
+
+    <!-- NEW: Buddy Go View -->
+    <section id="buddygo-view-section"
+        class="hidden py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-300 opacity-0 min-h-screen">
+        <button onclick="goHome()"
+            class="text-gray-400 hover:text-white flex items-center gap-2 mb-6 transition-colors font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Home
+        </button>
+
+        <div class="mb-8">
+            <h2
+                class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#c81d77] to-[#ff6b00] mb-2 tracking-tight">
+                Buddy Go</h2>
+            <p class="text-gray-300 font-medium">Pick up and drop anything, anywhere. <span class="text-[#00f2fe]">Easy
+                    to travel within Buchireddypalem limits.</span></p>
+        </div>
+
+        <div
+            class="bg-[#12141d] border border-gray-800 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden group">
+            <div class="absolute -inset-1 bg-gradient-to-b from-[#c81d77]/20 to-transparent blur-xl z-0"></div>
+            <div class="relative z-10">
+                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3 mb-8">
+                    <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                    <div>
+                        <h4 class="text-red-500 font-bold text-sm">Important Restriction</h4>
+                        <p class="text-gray-300 text-xs md:text-sm mt-1">Please be careful! We strictly <span
+                                class="font-bold text-white">do not transport glass items, alcohol, or illegal
+                                goods</span>. Packages will be verified upon pickup.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="relative">
+                        <div
+                            class="absolute top-4 left-4 w-3 h-3 rounded-full bg-[#48c479] shadow-[0_0_10px_rgba(72,196,121,0.8)]">
+                        </div>
+                        <input type="text" placeholder="Enter Pickup Location"
+                            class="w-full bg-[#1a1c23] border border-gray-700 rounded-xl px-12 py-4 text-white outline-none focus:border-[#48c479] transition-colors">
+                    </div>
+                    <div
+                        class="absolute left-[37px] top-[148px] w-0.5 h-6 bg-gray-700 border-l border-dashed border-gray-500 hidden md:block">
+                    </div>
+                    <div class="relative">
+                        <div
+                            class="absolute top-4 left-4 w-3 h-3 bg-macho-orange shadow-[0_0_10px_rgba(252,128,25,0.8)]">
+                        </div>
+                        <input type="text" placeholder="Enter Drop Location"
+                            class="w-full bg-[#1a1c23] border border-gray-700 rounded-xl px-12 py-4 text-white outline-none focus:border-macho-orange transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-400 mb-2 mt-4">What are you sending?</label>
+                        <select
+                            class="w-full bg-[#1a1c23] border border-gray-700 rounded-xl px-4 py-4 text-white outline-none focus:border-[#c81d77] transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>Select package type</option>
+                            <option value="food">Food / Kids Lunchbox 🍱</option>
+                            <option value="documents">Documents / Books 📚</option>
+                            <option value="clothes">Clothes / Apparel 👕</option>
+                            <option value="luggage">Luggage / Bags 🧳</option>
+                            <option value="electronics">Electronics / Chargers 💻</option>
+                            <option value="other">Other items (Non-fragile) 📦</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="bookBuddyGo()"
+                    class="w-full mt-8 py-4 bg-gradient-to-r from-[#c81d77] to-[#ff6b00] text-white font-black text-lg rounded-xl shadow-[0_0_20px_rgba(200,29,119,0.4)] hover:scale-[1.02] transition-transform uppercase tracking-wider flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Find Delivery Partner
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Profile Section -->
+    <section id="profile-section"
+        class="hidden py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-300 opacity-0 min-h-screen">
+        <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-8 mb-8 gap-6 mt-4">
+            <div>
+                <button onclick="goHome()"
+                    class="text-gray-400 hover:text-white flex items-center gap-2 mb-4 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Home
+                </button>
+                <h2 class="text-3xl font-black text-white tracking-tight">My Profile</h2>
+            </div>
+
+            <div
+                class="bg-[#12141d] border border-gray-800 rounded-xl p-4 flex items-center gap-4 shadow-lg w-full md:w-auto relative overflow-hidden group">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500 z-0">
+                </div>
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-[#ff6b00] to-[#c81d77] rounded-full flex items-center justify-center text-white font-bold text-xl relative z-10 flex-shrink-0">
+                    B</div>
+                <div class="relative z-10">
+                    <h3 class="text-white font-bold text-lg leading-tight flex items-center gap-2">
+                        <span id="profile-name">ByteBuddy User</span>
+                        <span id="profile-sub-badge"
+                            class="hidden text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm uppercase tracking-wider flex items-center gap-1"></span>
+                    </h3>
+                    <p class="text-[#00f2fe] text-sm font-medium" id="profile-phone">+91 0000000000</p>
+                    <p class="text-gray-400 text-xs truncate max-w-[200px]" id="profile-address">Buchireddypalem,
+                        Nellore</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="w-full lg:w-1/4 flex flex-col gap-2">
+                <button onclick="switchProfileTab('orders')"
+                    class="profile-tab active-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 bg-[#1a1c23] text-white border border-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg> My Orders
+                </button>
+                <button onclick="switchProfileTab('wallet')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-400 hover:bg-[#1a1c23] hover:text-white border border-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                        </path>
+                    </svg> My Wallet
+                </button>
+                <button onclick="switchProfileTab('address')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-400 hover:bg-[#1a1c23] hover:text-white border border-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg> Manage Address
+                </button>
+                <button onclick="switchProfileTab('favorites')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-400 hover:bg-[#1a1c23] hover:text-white border border-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg> My Favorite Restaurants
+                </button>
+                <button onclick="switchProfileTab('subscriptions')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-400 hover:bg-[#1a1c23] hover:text-white border border-transparent relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-[#ff6b00]/10 to-[#c81d77]/10 opacity-0 hover:opacity-100 transition-opacity">
+                    </div>
+                    <svg class="w-5 h-5 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                        </path>
+                    </svg> Subscriptions
+                </button>
+                <div class="h-px bg-gray-800 my-2"></div>
+                <button onclick="switchProfileTab('phone')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-400 hover:bg-[#1a1c23] hover:text-white border border-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg> Change Phone No.
+                </button>
+                <button onclick="switchProfileTab('delete')"
+                    class="profile-tab w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-red-500 hover:bg-red-500/10 border border-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg> Delete Account
+                </button>
+                <button onclick="logout()"
+                    class="w-full text-left px-5 py-4 rounded-xl font-bold transition-all flex items-center gap-3 text-gray-500 hover:text-white mt-4">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                        </path>
+                    </svg> Logout
+                </button>
+            </div>
+
+            <div class="w-full lg:w-3/4 bg-[#12141d] border border-gray-800 rounded-2xl p-6 md:p-8 min-h-[500px]">
+                <div id="tab-orders" class="tab-content block animate-fade-in">
+                    <h3 class="text-2xl font-bold text-white mb-6">Order History</h3>
+                    <div class="space-y-6" id="orders-list">
+                        <div class="border border-gray-800 rounded-xl p-4 md:p-6 bg-[#1a1c23]">
+                            <div class="flex justify-between items-start mb-4 border-b border-gray-800 pb-4">
+                                <div>
+                                    <h4 class="text-base md:text-lg font-bold text-white">Meghana Foods</h4>
+                                    <p class="text-xs md:text-sm text-gray-400">Buchireddypalem, Nellore • Delivered on
+                                        Mar 20, 2026, 08:30 PM</p>
+                                </div>
+                                <span
+                                    class="bg-green-500/20 text-green-500 text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase">Delivered</span>
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-sm text-gray-300">1 x Boneless Chicken Biryani</p>
+                                <p class="text-sm text-gray-300">2 x Coca Cola</p>
+                            </div>
+                            <div class="bg-[#0f1115] p-4 rounded-lg text-sm text-gray-400 space-y-1 mb-4">
+                                <div class="flex justify-between"><span>Item Total</span><span
+                                        class="text-white">₹450</span></div>
+                                <div class="flex justify-between"><span>Delivery Fee</span><span
+                                        class="text-white">₹40</span></div>
+                                <div class="flex justify-between"><span>Platform Fee</span><span
+                                        class="text-white">₹5</span></div>
+                                <div class="flex justify-between text-[#c81d77]"><span>Coupon
+                                        (BYTE50)</span><span>-₹50</span></div>
+                                <div
+                                    class="flex justify-between font-bold text-white pt-2 border-t border-gray-800 mt-2">
+                                    <span>Total Paid</span><span class="text-[#00f2fe]">₹445</span>
+                                </div>
+                            </div>
+                            <button class="text-[#ff6b00] font-bold text-sm hover:underline">REORDER</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-wallet" class="tab-content hidden animate-fade-in">
+                    <h3 class="text-2xl font-bold text-white mb-6">My Wallet</h3>
+                    <div
+                        class="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] mb-8">
+                        <div
+                            class="bg-[#12141d] rounded-[14px] p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                            <div>
+                                <p class="text-gray-400 text-sm mb-1">Available Balance</p>
+                                <h4 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00f2fe] to-[#4facfe]"
+                                    id="wallet-balance">₹150.00</h4>
+                            </div>
+                            <button onclick="showToast('Added ₹500 to Wallet!')"
+                                class="w-full md:w-auto bg-white text-[#12141d] px-6 py-3 rounded-lg font-bold hover:bg-gray-200 transition-colors whitespace-nowrap">
+                                + Add Money
+                            </button>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-4">Recent Transactions</h4>
+                    <div class="space-y-3">
+                        <div
+                            class="flex justify-between items-center p-4 bg-[#1a1c23] rounded-lg border border-gray-800">
+                            <div>
+                                <p class="text-white font-medium text-sm md:text-base">Refund - Cancelled Order</p>
+                                <p class="text-xs text-gray-500">Mar 15, 2026</p>
+                            </div>
+                            <span class="text-green-500 font-bold">+₹150.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-address" class="tab-content hidden animate-fade-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-white">Manage Addresses</h3>
+                        <button onclick="showToast('New Address Prompt Opened')"
+                            class="text-[#00f2fe] font-bold text-sm hover:underline">+ Add New</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="address-list">
+                        <div class="border border-[#00f2fe] bg-[#1a1c23] rounded-xl p-5 relative">
+                            <span
+                                class="absolute top-4 right-4 bg-[#00f2fe]/20 text-[#00f2fe] text-[10px] font-bold px-2 py-1 rounded uppercase">Primary</span>
+                            <div class="flex items-center gap-2 mb-2 text-white font-bold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                    </path>
+                                </svg> Home
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Flat 402, Mumbai Highway, Buchireddypalem, Nellore,
+                                Andhra Pradesh</p>
+                            <div class="flex gap-4 text-sm font-bold">
+                                <button class="text-[#ff6b00] hover:text-[#c81d77]">EDIT</button>
+                                <button class="text-gray-500 hover:text-red-500">DELETE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-favorites" class="tab-content hidden animate-fade-in">
+                    <h3 class="text-2xl font-bold text-white mb-6">My Favorite Restaurants</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="favorites-grid"></div>
+                </div>
+
+                <div id="tab-subscriptions" class="tab-content hidden animate-fade-in">
+                    <h3 class="text-2xl font-bold text-white mb-2">ByteBuddy Subscriptions</h3>
+                    <p class="text-gray-400 text-sm mb-8">Get Unlimited Free Delivery within 5 km radius!</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div
+                            class="border border-gray-600 rounded-2xl p-6 bg-gradient-to-b from-[#1a1c23] to-[#12141d] relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-300 to-gray-500">
+                            </div>
+                            <h4 class="text-xl font-bold text-gray-300 mb-1">Silver Pack</h4>
+                            <p class="text-sm text-gray-500 mb-4">Valid for 7 Days</p>
+                            <div class="text-3xl font-black text-white mb-6">₹300</div>
+                            <ul class="text-sm text-gray-300 space-y-2 mb-6">
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-500" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg> Free Delivery (< 5km)</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-500" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg> Priority Support</li>
+                            </ul>
+                            <button onclick="initiateSubscription('Silver', 300)"
+                                class="w-full py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-colors">BUY
+                                SILVER</button>
+                        </div>
+
+                        <div
+                            class="relative p-[2px] rounded-2xl bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] transform md:-translate-y-2 shadow-[0_10px_30px_rgba(200,29,119,0.3)]">
+                            <div class="bg-[#12141d] rounded-[14px] p-6 h-full relative">
+                                <span
+                                    class="absolute top-4 right-4 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Most
+                                    Popular</span>
+                                <h4
+                                    class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77] mb-1">
+                                    Gold Pack</h4>
+                                <p class="text-sm text-gray-400 mb-4">Valid for 30 Days</p>
+                                <div class="text-3xl font-black text-white mb-6">₹750</div>
+                                <ul class="text-sm text-gray-300 space-y-2 mb-6">
+                                    <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#00f2fe]" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg> Free Delivery (< 5km)</li>
+                                    <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#00f2fe]" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg> VIP Support</li>
+                                    <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#00f2fe]" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg> Exclusive Discounts</li>
+                                </ul>
+                                <button onclick="initiateSubscription('Gold', 750)"
+                                    class="w-full py-3 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white font-bold rounded-lg hover:shadow-lg transition-all">BUY
+                                    GOLD</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-phone" class="tab-content hidden animate-fade-in max-w-md">
+                    <h3 class="text-2xl font-bold text-white mb-2">Change Phone Number</h3>
+                    <p class="text-gray-400 text-sm mb-6">You will need to verify your new number with an OTP.</p>
+
+                    <div id="change-phone-step-1">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">New Mobile Number</label>
+                        <div
+                            class="flex mb-4 border border-gray-700 rounded-lg overflow-hidden focus-within:border-[#00f2fe] transition-all">
+                            <span
+                                class="bg-[#1a1c23] text-gray-400 px-4 py-3 border-r border-gray-700 font-medium">+91</span>
+                            <input type="tel" id="new-phone-input" placeholder="10 digit number"
+                                class="w-full bg-[#1a1c23] text-white px-4 py-3 outline-none font-medium">
+                        </div>
+                        <button
+                            onclick="document.getElementById('change-phone-step-1').classList.add('hidden'); document.getElementById('change-phone-step-2').classList.remove('hidden');"
+                            class="w-full py-3 bg-[#00f2fe] text-[#12141d] font-bold rounded-lg hover:bg-[#4facfe] transition-colors">Send
+                            OTP</button>
+                    </div>
+
+                    <div id="change-phone-step-2" class="hidden">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Enter OTP sent to new number</label>
+                        <div class="flex gap-3 mb-6">
+                            <input type="text" maxlength="1"
+                                class="w-12 h-12 text-center text-xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white outline-none focus:border-[#00f2fe]">
+                            <input type="text" maxlength="1"
+                                class="w-12 h-12 text-center text-xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white outline-none focus:border-[#00f2fe]">
+                            <input type="text" maxlength="1"
+                                class="w-12 h-12 text-center text-xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white outline-none focus:border-[#00f2fe]">
+                            <input type="text" maxlength="1"
+                                class="w-12 h-12 text-center text-xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white outline-none focus:border-[#00f2fe]">
+                        </div>
+                        <button onclick="updatePhoneNumber()"
+                            class="w-full py-3 bg-[#48c479] text-white font-bold rounded-lg hover:bg-green-500 transition-colors">Verify
+                            & Update</button>
+                    </div>
+                </div>
+
+                <div id="tab-delete" class="tab-content hidden animate-fade-in max-w-lg">
+                    <h3 class="text-2xl font-bold text-red-500 mb-4">Delete Account</h3>
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-5 mb-6">
+                        <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg> Warning
+                        </h4>
+                        <p class="text-sm text-gray-300">This action is permanent and cannot be undone. All your order
+                            history, wallet balance, active subscriptions, and saved addresses will be completely erased
+                            from our database.</p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Type "DELETE" to confirm</label>
+                        <input type="text" id="delete-confirm-input"
+                            class="w-full bg-[#1a1c23] border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-red-500">
+                    </div>
+                    <button onclick="deleteAccount()"
+                        class="w-full py-3 px-8 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-colors">Permanently
+                        Delete Account</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="pt-16 pb-10 mt-10 border-t border-gray-800 bg-[#0f1115]/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 border-b border-gray-800 pb-10">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg class="w-8 h-8" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 10H16C18.2091 10 20 11.7909 20 14C20 15.4206 19.2599 16.668 18.1396 17.3392C19.7828 18.0673 21 19.6757 21 21.5C21 23.9853 18.9853 26 16.5 26H10V10Z"
+                                stroke="url(#bb-grad-foot-1)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M10 17.5H17.5" stroke="url(#bb-grad-foot-1)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <path
+                                d="M18 14H24C26.2091 14 28 15.7909 28 18C28 19.4206 27.2599 20.668 26.1396 21.3392C27.7828 22.0673 29 23.6757 29 25.5C29 27.9853 26.9853 30 24.5 30H18V14Z"
+                                stroke="url(#bb-grad-foot-2)" stroke-width="2.5" stroke-linejoin="round" />
+                            <path d="M18 21.5H25.5" stroke="url(#bb-grad-foot-2)" stroke-width="2.5"
+                                stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="bb-grad-foot-1" x1="10" y1="10" x2="21" y2="26"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ff6b00" />
+                                    <stop offset="100%" stop-color="#c81d77" />
+                                </linearGradient>
+                                <linearGradient id="bb-grad-foot-2" x1="18" y1="14" x2="29" y2="30"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#c81d77" />
+                                    <stop offset="100%" stop-color="#00f2fe" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span class="text-2xl font-extrabold tracking-tight"><span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">Byte</span><span
+                                class="text-white">Buddy</span></span>
+                    </div>
+                    <p class="text-gray-400 text-[15px]">© 2026 ByteBuddy Technologies Pvt. Ltd</p>
+                </div>
+                <div>
+                    <h4 class="text-[15px] font-semibold mb-4 text-white">Company</h4>
+                    <ul class="space-y-3 text-[15px] text-gray-400">
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">About</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Careers</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Team</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">ByteBuddy One</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-[15px] font-semibold mb-4 text-white">Contact us</h4>
+                    <ul class="space-y-3 text-[15px] text-gray-400">
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Help & Support</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Partner with us</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Ride with us</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-[15px] font-semibold mb-4 text-white">Legal</h4>
+                    <ul class="space-y-3 text-[15px] text-gray-400">
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Terms & Conditions</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Cookie Policy</li>
+                        <li class="hover:text-macho-orange cursor-pointer transition-colors">Privacy Policy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer Setup -->
+    <div id="cart-backdrop"
+        class="fixed inset-0 bg-[#0f1115]/80 backdrop-blur-sm z-[110] hidden transition-opacity duration-300 opacity-0"
+        onclick="toggleCart()"></div>
+    <div id="cart-drawer"
+        class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-[#12141d] shadow-[-10px_0_30px_rgba(0,0,0,0.8)] z-[120] transform translate-x-full transition-transform duration-300 flex flex-col border-l border-gray-800">
+        <div
+            class="p-6 border-b border-gray-800 flex justify-between items-center bg-gradient-to-r from-[#12141d] to-[#1a1c23]">
+            <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">
+                Your Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4 scrollbar-hide">
+            <div class="h-full flex flex-col items-center justify-center text-gray-500 hidden" id="empty-cart-msg">
+                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                <p>Your cart is empty.</p>
+            </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-800 bg-[#0f1115]">
+            <form id="coupon-form" class="flex gap-2 mb-4" onsubmit="applyCoupon(event)">
+                <input type="text" id="coupon-input" placeholder="Enter coupon (e.g. BYTE50)"
+                    class="w-full bg-[#1a1c23] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm outline-none focus:border-[#00f2fe] uppercase">
+                <button type="submit"
+                    class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-700 transition-colors">Apply</button>
+            </form>
+            <div class="space-y-2 text-sm text-gray-400 mb-4 border-b border-gray-800 pb-4">
+                <div class="flex justify-between"><span>Subtotal</span><span id="cart-subtotal"
+                        class="text-white font-medium">₹0</span></div>
+                <div class="flex justify-between"><span>Delivery Fee</span><span id="cart-delivery-fee"
+                        class="text-white font-medium">₹40</span></div>
+                <div class="flex justify-between"><span>Platform Fee</span><span
+                        class="text-white font-medium">₹5</span></div>
+                <div class="flex justify-between hidden text-[#48c479]" id="discount-row"><span>Discount
+                        applied</span><span id="cart-discount" class="font-bold">-₹0</span></div>
+            </div>
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-lg font-bold text-white">To Pay</span>
+                <span id="cart-total"
+                    class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">₹0</span>
+            </div>
+            <button onclick="processCheckout()"
+                class="w-full py-4 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] text-white font-bold rounded-xl shadow-[0_0_20px_rgba(200,29,119,0.4)] hover:scale-[1.02] transition-transform uppercase tracking-wider">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Payment Gateway Modal -->
+    <div id="payment-modal"
+        class="fixed inset-0 bg-[#0f1115]/90 backdrop-blur-md z-[130] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div
+            class="relative w-full max-w-md mx-4 p-[1.5px] rounded-2xl bg-gradient-to-r from-[#00f2fe] to-[#4facfe] shadow-[0_0_30px_rgba(0,242,254,0.3)]">
+            <div class="bg-[#12141d] rounded-2xl p-8 relative overflow-hidden text-center">
+                <button onclick="closePaymentModal()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+                <div
+                    class="w-16 h-16 bg-[#1a1c23] rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
+                    <svg class="w-8 h-8 text-[#00f2fe]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                        </path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black text-white mb-2">Payment Gateway</h2>
+                <p class="text-gray-400 text-sm mb-6">Complete your payment of <span id="payment-amount"
+                        class="text-white font-bold">₹0</span></p>
+
+                <div class="space-y-3 mb-6">
+                    <button
+                        class="w-full flex items-center justify-between p-4 rounded-xl border border-gray-700 bg-[#1a1c23] hover:border-[#00f2fe] transition-colors focus:ring-1 focus:ring-[#00f2fe] outline-none group"
+                        onclick="confirmPayment()">
+                        <span class="font-bold text-white group-hover:text-[#00f2fe]">UPI / GPay</span>
+                        <svg class="w-5 h-5 text-gray-500 group-hover:text-[#00f2fe]" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </button>
+                    <button
+                        class="w-full flex items-center justify-between p-4 rounded-xl border border-gray-700 bg-[#1a1c23] hover:border-[#00f2fe] transition-colors focus:ring-1 focus:ring-[#00f2fe] outline-none group"
+                        onclick="confirmPayment()">
+                        <span class="font-bold text-white group-hover:text-[#00f2fe]">Credit / Debit Card</span>
+                        <svg class="w-5 h-5 text-gray-500 group-hover:text-[#00f2fe]" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </button>
+                    <button
+                        class="w-full flex items-center justify-between p-4 rounded-xl border border-gray-700 bg-[#1a1c23] hover:border-[#00f2fe] transition-colors focus:ring-1 focus:ring-[#00f2fe] outline-none group"
+                        onclick="confirmPayment()">
+                        <span class="font-bold text-white group-hover:text-[#00f2fe]">Cash on Delivery</span>
+                        <svg class="w-5 h-5 text-gray-500 group-hover:text-[#00f2fe]" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast"
+        class="fixed bottom-10 left-1/2 transform -translate-x-1/2 translate-y-20 opacity-0 transition-all duration-300 bg-[#48c479] text-white px-8 py-3 rounded shadow-[0_0_15px_rgba(72,196,121,0.5)] font-bold flex items-center gap-3 z-[200] text-[15px]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span id="toast-message">Item added to cart successfully!</span>
+    </div>
+
+    <!-- Auth Modal (OTP Login) -->
+    <div id="auth-modal"
+        class="fixed inset-0 bg-[#0f1115]/90 backdrop-blur-md z-[140] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div
+            class="relative w-full max-w-md mx-4 p-[1.5px] rounded-2xl bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] shadow-[0_0_30px_rgba(200,29,119,0.3)]">
+            <div class="bg-[#12141d] rounded-2xl p-8 relative overflow-hidden">
+                <button onclick="closeAuthModal()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+
+                <h2 class="text-3xl font-black text-white mb-2">Login</h2>
+                <p class="text-gray-400 text-sm mb-8" id="auth-subtitle">Enter your mobile number to proceed</p>
+
+                <form id="phone-form" onsubmit="handleSendOTP(event)">
+                    <div
+                        class="flex mb-6 border border-gray-700 rounded-lg overflow-hidden focus-within:border-[#c81d77] focus-within:ring-1 focus-within:ring-[#c81d77] transition-all">
+                        <span
+                            class="bg-[#1a1c23] text-gray-400 px-4 py-3 border-r border-gray-700 font-medium">+91</span>
+                        <input type="tel" id="mobile-number" pattern="[0-9]{10}" required
+                            placeholder="10 digit mobile number"
+                            class="w-full bg-[#1a1c23] text-white px-4 py-3 outline-none font-medium tracking-wide placeholder-gray-600">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3.5 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white font-bold rounded-lg hover:shadow-[0_0_15px_rgba(200,29,119,0.5)] transition-all uppercase tracking-wider text-sm">
+                        Get OTP
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4 text-center">By clicking, you accept our Terms & Conditions and
+                        Privacy Policy.</p>
+                </form>
+
+                <form id="otp-form" onsubmit="handleVerifyOTP(event)" class="hidden">
+                    <div class="flex justify-between gap-3 mb-6">
+                        <input type="text" maxlength="1"
+                            class="w-14 h-14 text-center text-2xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white focus:border-[#00f2fe] focus:outline-none otp-input">
+                        <input type="text" maxlength="1"
+                            class="w-14 h-14 text-center text-2xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white focus:border-[#00f2fe] focus:outline-none otp-input">
+                        <input type="text" maxlength="1"
+                            class="w-14 h-14 text-center text-2xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white focus:border-[#00f2fe] focus:outline-none otp-input">
+                        <input type="text" maxlength="1"
+                            class="w-14 h-14 text-center text-2xl font-bold bg-[#1a1c23] border border-gray-700 rounded-lg text-white focus:border-[#00f2fe] focus:outline-none otp-input">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3.5 bg-gradient-to-r from-[#c81d77] to-[#00f2fe] text-white font-bold rounded-lg hover:shadow-[0_0_15px_rgba(0,242,254,0.5)] transition-all uppercase tracking-wider text-sm mb-4">
+                        Verify & Login
+                    </button>
+                    <p class="text-sm text-gray-400 text-center">Didn't receive it? <span
+                            class="text-[#00f2fe] cursor-pointer font-bold hover:underline"
+                            onclick="resetAuthForms()">Resend OTP</span></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        const foodDatabase = [
+            {
+                id: 1, name: 'Meghana Foods', category: 'Biryani, Andhra, South Indian', rating: 4.6, time: '25-30 mins', tags: ['biryani', 'spicy', 'chicken', 'best', 'indian'], img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=400&fit=crop', discount: 'ITEMS AT ₹179',
+                menu: [
+                    { id: 101, name: 'Chicken Boneless Biryani', price: 350, isVeg: false, category: 'Biryani', desc: 'Aromatic basmati rice cooked with tender boneless chicken pieces and secret spices.', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&h=300&fit=crop' },
+                    { id: 102, name: 'Paneer Biryani', price: 280, isVeg: true, category: 'Biryani', desc: 'Flavorful rice layered with marinated paneer cubes and cooked to perfection.', img: 'https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=300&h=300&fit=crop' },
+                    { id: 103, name: 'Chilli Chicken', price: 250, isVeg: false, category: 'Starters', desc: 'Crispy fried chicken tossed in a spicy, tangy sauce with bell peppers.', img: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=300&h=300&fit=crop' },
+                    { id: 104, name: 'Veg Manchurian', price: 220, isVeg: true, category: 'Starters', desc: 'Mixed vegetable dumplings tossed in a dark soy and garlic sauce.', img: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=300&h=300&fit=crop' }
+                ]
+            },
+            {
+                id: 2, name: 'Truffles', category: 'American, Desserts, Burgers', rating: 4.5, time: '35-40 mins', tags: ['burger', 'american', 'fast food', 'best', 'heavy'], img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop', discount: '20% OFF',
+                menu: [
+                    { id: 201, name: 'All American Cheese Burger', price: 300, isVeg: false, category: 'Burgers', desc: 'Juicy beef patty, melted cheddar, lettuce, tomato, and house mayo.', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop' },
+                    { id: 202, name: 'Crispy Veg Burger', price: 220, isVeg: true, category: 'Burgers', desc: 'Crunchy potato and corn patty topped with fresh veggies and tangy sauce.', img: 'https://images.unsplash.com/photo-1585238332058-471a5efa698e?w=300&h=300&fit=crop' },
+                    { id: 203, name: 'Death By Chocolate', price: 250, isVeg: true, category: 'Desserts', desc: 'Layers of chocolate cake, ice cream, hot fudge, and nuts.', img: 'https://images.unsplash.com/photo-1559703248-dcaaec9fac92?w=300&h=300&fit=crop' }
+                ]
+            },
+            {
+                id: 3, name: 'A2B - Adyar Ananda Bhavan', category: 'South Indian, Sweets, Snacks', rating: 4.3, time: '20-25 mins', tags: ['south indian', 'dosa', 'veg', 'healthy'], img: 'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?w=600&h=400&fit=crop', discount: 'FREE DELIVERY',
+                menu: [
+                    { id: 301, name: 'Masala Dosa', price: 120, isVeg: true, category: 'South Indian', desc: 'Crispy crepe made from rice batter, filled with spiced potato curry.', img: 'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?w=300&h=300&fit=crop' },
+                    { id: 302, name: 'Idli Vada Combo', price: 100, isVeg: true, category: 'South Indian', desc: 'Soft steamed rice cakes and a crispy lentil doughnut served with chutney and sambar.', img: 'https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?w=300&h=300&fit=crop' },
+                    { id: 303, name: 'Mini Meals', price: 180, isVeg: true, category: 'Meals', desc: 'A wholesome meal with rice, sambar, rasam, poriyal, sweet, and papad.', img: 'https://images.unsplash.com/photo-1626779848525-4521408b07ed?w=300&h=300&fit=crop' }
+                ]
+            },
+            {
+                id: 4, name: 'Leon\'s - Burgers & Wings', category: 'American, Snacks, Fast Food', rating: 4.4, time: '30-35 mins', tags: ['burger', 'chicken', 'wings', 'spicy'], img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=400&fit=crop', discount: '',
+                menu: [
+                    { id: 401, name: 'Spicy Chicken Wings (6 pcs)', price: 240, isVeg: false, category: 'Wings', desc: 'Crispy fried wings tossed in our signature blazing hot sauce.', img: 'https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?w=300&h=300&fit=crop' },
+                    { id: 402, name: 'Classic Chicken Burger', price: 190, isVeg: false, category: 'Burgers', desc: 'Tender grilled chicken fillet with crisp lettuce and mayo.', img: 'https://images.unsplash.com/photo-1615719413546-198b25453f85?w=300&h=300&fit=crop' },
+                    { id: 403, name: 'Peri Peri Fries', price: 130, isVeg: true, category: 'Sides', desc: 'Crispy golden fries generously dusted with spicy peri peri seasoning.', img: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300&h=300&fit=crop' }
+                ]
+            },
+            {
+                id: 5, name: 'Domino\'s Pizza', category: 'Pizzas, Italian, Pastas', rating: 4.2, time: '25 mins', tags: ['pizza', 'fast food', 'cheese'], img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop', discount: '₹120 OFF',
+                menu: [
+                    { id: 501, name: 'Margherita Pizza', price: 239, isVeg: true, category: 'Pizzas', desc: 'Classic delight with 100% real mozzarella cheese.', img: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&h=300&fit=crop' },
+                    { id: 502, name: 'Pepperoni Pizza', price: 399, isVeg: false, category: 'Pizzas', desc: 'Loaded with double pepper barbecue chicken, golden corn, and jalapeno.', img: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=300&h=300&fit=crop' },
+                    { id: 503, name: 'Garlic Breadsticks', price: 109, isVeg: true, category: 'Sides', desc: 'Freshly baked garlic bread with a cheese dip.', img: 'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=300&h=300&fit=crop' }
+                ]
+            }
+        ];
+
+        const martDatabase = [
+            { id: 2001, name: 'Fresh Red Tomatoes', price: 35, category: 'Fresh Vegetables', weight: '500 g', img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=300&h=300&fit=crop' },
+            { id: 2002, name: 'Premium Red Onions', price: 40, category: 'Fresh Vegetables', weight: '1 kg', img: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300&h=300&fit=crop' },
+            { id: 2003, name: 'Robusta Bananas', price: 60, category: 'Fruits', weight: '1/2 Dozen', img: 'https://images.unsplash.com/photo-1571501478200-c5a4dbfb511b?w=300&h=300&fit=crop' },
+            { id: 2004, name: 'Fuji Apples', price: 120, category: 'Fruits', weight: '4 pcs', img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6faa6?w=300&h=300&fit=crop' },
+            { id: 2005, name: 'Amul Taaza Toned Milk', price: 26, category: 'Dairy & Bakery', weight: '500 ml', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&h=300&fit=crop' },
+            { id: 2006, name: 'Britannia Whole Wheat Bread', price: 45, category: 'Dairy & Bakery', weight: '400 g', img: 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=300&h=300&fit=crop' },
+            { id: 2007, name: 'Lay\'s India\'s Magic Masala', price: 20, category: 'Snacks & Beverages', weight: '50 g', img: 'https://images.unsplash.com/photo-1566478989037-e98700878b6d?w=300&h=300&fit=crop' },
+            { id: 2008, name: 'Coca-Cola Can', price: 40, category: 'Snacks & Beverages', weight: '300 ml', img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300&h=300&fit=crop' },
+        ];
+
+        let cartCount = 0;
+        let cartItems = [];
+        let discountApplied = { amount: 0, isPercentage: false, freeDelivery: false, code: '' };
+        let isLoggedIn = false;
+        let currentUserPhone = '';
+        let currentSubscription = null;
+        let paymentContext = { type: 'cart' };
+
+        let currentRestaurantId = null;
+        let currentFoodFilter = 'all';
+
+        // --- DOM Elements ---
+        const foodGrid = document.getElementById('food-grid');
+        const emptyState = document.getElementById('empty-state');
+        const menuTitle = document.getElementById('menu-title');
+        const resetFilterBtn = document.getElementById('reset-filter-btn');
+        const aiSearchForm = document.getElementById('ai-search-form');
+        const aiInput = document.getElementById('ai-input');
+        const aiResultsContainer = document.getElementById('ai-results-container');
+        const aiCardsGrid = document.getElementById('ai-cards-grid');
+        const aiThinkingText = document.getElementById('ai-thinking-text');
+        const aiResponseMessage = document.getElementById('ai-response-message');
+
+        const cartCountBadge = document.getElementById('cart-count');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const quickTags = document.querySelectorAll('.quick-tag');
+
+        // Auth Elements
+        const authModal = document.getElementById('auth-modal');
+        const phoneForm = document.getElementById('phone-form');
+        const otpForm = document.getElementById('otp-form');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const mobileNumberInput = document.getElementById('mobile-number');
+        const authBtnText = document.getElementById('auth-text');
+        const otpInputs = document.querySelectorAll('.otp-input');
+
+        // Mobile Menu Elements
+        const mobileMenuDrawer = document.getElementById('mobile-menu-drawer');
+        const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+        const mobileAuthText = document.getElementById('mobile-auth-text');
+
+        // Cart Elements
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartBackdrop = document.getElementById('cart-backdrop');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const emptyCartMsg = document.getElementById('empty-cart-msg');
+        const cartSubtotalEl = document.getElementById('cart-subtotal');
+        const cartDeliveryFeeEl = document.getElementById('cart-delivery-fee');
+        const cartTotalEl = document.getElementById('cart-total');
+        const discountRow = document.getElementById('discount-row');
+        const cartDiscountEl = document.getElementById('cart-discount');
+        const paymentModal = document.getElementById('payment-modal');
+        const paymentAmount = document.getElementById('payment-amount');
+
+        // Main View Elements
+        const homeLandingSection = document.getElementById('home-landing-section');
+        const mainFoodView = document.getElementById('main-food-view');
+        const restaurantViewSection = document.getElementById('restaurant-view-section');
+        const buddymartViewSection = document.getElementById('buddymart-view-section');
+        const buddygoViewSection = document.getElementById('buddygo-view-section');
+        const offersViewSection = document.getElementById('offers-view-section');
+
+        // Profile Elements
+        const profileSection = document.getElementById('profile-section');
+        const tabs = document.querySelectorAll('.profile-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // --- Initialization ---
+        function init() {
+            updateDynamicBanner();
+            renderMenu(foodDatabase);
+
+            aiSearchForm.addEventListener('submit', handleAISearch);
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            quickTags.forEach(tag => {
+                tag.addEventListener('click', (e) => {
+                    let tagText = e.target.innerText;
+                    let searchPhrase = "";
+                    if (tagText.includes("Hangry")) searchPhrase = "heavy burger fast food";
+                    else if (tagText.includes("PostGym")) searchPhrase = "healthy chicken bowl salad";
+                    else if (tagText.includes("BreakupComfort")) searchPhrase = "ice cream sweet dessert pizza";
+                    else if (tagText.includes("Win")) searchPhrase = "best biryani top rated";
+                    else searchPhrase = tagText.replace(/[^\w\s]/gi, '').trim();
+
+                    aiInput.value = searchPhrase;
+                    handleAISearch(new Event('submit'));
+                });
+            });
+        }
+
+        // --- Dynamic Landing Banner ---
+        function updateDynamicBanner() {
+            const hour = new Date().getHours();
+            const title = document.getElementById('banner-title');
+            const subtitle = document.getElementById('banner-subtitle');
+            const img = document.getElementById('banner-img');
+
+            if (hour >= 0 && hour < 5) {
+                title.innerText = "Late Night Cravings? 🌙";
+                subtitle.innerText = "Order now and satisfy your midnight hunger.";
+                img.src = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1000&fit=crop";
+            } else if (hour >= 5 && hour < 11) {
+                title.innerText = "Good Morning! ☀️";
+                subtitle.innerText = "Start your day fresh with a healthy breakfast.";
+                img.src = "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=1000&fit=crop";
+            } else if (hour >= 11 && hour < 16) {
+                title.innerText = "Lunch Time! 🍔";
+                subtitle.innerText = "Grab a delicious bite for your midday break.";
+                img.src = "https://images.unsplash.com/photo-1550547660-d9450f859349?w=1000&fit=crop";
+            } else if (hour >= 16 && hour < 19) {
+                title.innerText = "Evening Snacks! ☕";
+                subtitle.innerText = "Perfect pairings for your evening chill.";
+                img.src = "https://images.unsplash.com/photo-1559703248-dcaaec9fac92?w=1000&fit=crop";
+            } else {
+                title.innerText = "Dinner Plans? 🍲";
+                subtitle.innerText = "Order the best meals from top-rated spots.";
+                img.src = "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=1000&fit=crop";
+            }
+        }
+
+        // --- Core Navigation ---
+        function goHome() {
+            mainFoodView.classList.add('opacity-0');
+            restaurantViewSection.classList.add('opacity-0');
+            profileSection.classList.add('opacity-0');
+            buddymartViewSection.classList.add('opacity-0');
+            buddygoViewSection.classList.add('opacity-0');
+            offersViewSection.classList.add('opacity-0');
+
+            setTimeout(() => {
+                mainFoodView.classList.add('hidden');
+                restaurantViewSection.classList.add('hidden');
+                profileSection.classList.add('hidden');
+                buddymartViewSection.classList.add('hidden');
+                buddygoViewSection.classList.add('hidden');
+                offersViewSection.classList.add('hidden');
+
+                homeLandingSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+
+                setTimeout(() => {
+                    homeLandingSection.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        function openFoodView() {
+            homeLandingSection.classList.add('opacity-0');
+            offersViewSection.classList.add('opacity-0');
+
+            setTimeout(() => {
+                homeLandingSection.classList.add('hidden');
+                offersViewSection.classList.add('hidden');
+
+                mainFoodView.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+
+                setTimeout(() => {
+                    mainFoodView.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        function openBuddyMart() {
+            homeLandingSection.classList.add('opacity-0');
+            offersViewSection.classList.add('opacity-0');
+            setTimeout(() => {
+                homeLandingSection.classList.add('hidden');
+                offersViewSection.classList.add('hidden');
+
+                buddymartViewSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                renderMartItems('All');
+                setTimeout(() => {
+                    buddymartViewSection.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        function openBuddyGo() {
+            homeLandingSection.classList.add('opacity-0');
+            offersViewSection.classList.add('opacity-0');
+            setTimeout(() => {
+                homeLandingSection.classList.add('hidden');
+                offersViewSection.classList.add('hidden');
+
+                buddygoViewSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                setTimeout(() => {
+                    buddygoViewSection.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        function openOffersView() {
+            homeLandingSection.classList.add('opacity-0');
+            mainFoodView.classList.add('opacity-0');
+            restaurantViewSection.classList.add('opacity-0');
+            profileSection.classList.add('opacity-0');
+            buddymartViewSection.classList.add('opacity-0');
+            buddygoViewSection.classList.add('opacity-0');
+
+            setTimeout(() => {
+                homeLandingSection.classList.add('hidden');
+                mainFoodView.classList.add('hidden');
+                restaurantViewSection.classList.add('hidden');
+                profileSection.classList.add('hidden');
+                buddymartViewSection.classList.add('hidden');
+                buddygoViewSection.classList.add('hidden');
+
+                offersViewSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                renderOffersGrid();
+
+                setTimeout(() => {
+                    offersViewSection.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        function renderOffersGrid() {
+            const grid = document.getElementById('offers-grid');
+            grid.innerHTML = '';
+
+            const discountedRests = foodDatabase.filter(item => item.discount && item.discount.length > 0);
+
+            discountedRests.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'group relative cursor-pointer transition-transform hover:-translate-y-1 h-full';
+                card.onclick = () => {
+                    offersViewSection.classList.add('opacity-0');
+                    setTimeout(() => {
+                        offersViewSection.classList.add('hidden');
+                        mainFoodView.classList.remove('hidden');
+                        openRestaurant(item.id);
+                    }, 300);
+                };
+
+                const ratingColor = item.rating >= 4.0 ? 'bg-[#48c479]' : 'bg-[#db7c38]';
+
+                card.innerHTML = `
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-[20px] blur opacity-20 group-hover:opacity-50 transition duration-500 z-0"></div>
+                    <div class="relative p-[1.5px] bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-[20px] h-full z-10">
+                        <div class="bg-[#12141d] rounded-[18.5px] h-full pb-4 flex flex-col">
+                            <div class="relative w-full h-[180px] sm:h-[200px] rounded-t-[18.5px] overflow-hidden mb-3 flex-shrink-0">
+                                <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" loading="lazy">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#12141d] to-transparent opacity-80"></div>
+                                <div class="absolute top-3 left-3 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white text-[11px] font-extrabold px-2.5 py-1 rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-20 uppercase tracking-wider animate-pulse">${item.discount}</div>
+                            </div>
+                            
+                            <div class="pt-2 px-4 relative flex-grow flex flex-col z-10">
+                                <h3 class="text-[18px] font-bold text-white truncate tracking-tight mb-1">${item.name}</h3>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex items-center justify-center w-[18px] h-[18px] rounded-full ${ratingColor} text-white">
+                                        <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                    </div>
+                                    <span class="font-bold text-gray-200 text-[15px]">${item.rating}</span>
+                                    <span class="text-gray-500 text-[12px]">•</span>
+                                    <span class="font-bold text-gray-200 text-[15px]">${item.time}</span>
+                                </div>
+                                <p class="text-gray-400 text-[14px] truncate mb-1">${item.category}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function copyCoupon(code) {
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Coupon " + code + " copied to clipboard!");
+            } catch (err) {
+                showToast("Failed to copy coupon.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function bookBuddyGo() {
+            if (!isLoggedIn) {
+                openAuthModal();
+                return;
+            }
+
+            const selects = buddygoViewSection.querySelectorAll('input, select');
+            let isValid = true;
+            selects.forEach(el => {
+                if (!el.value) isValid = false;
+            });
+
+            if (!isValid) {
+                showToast('Please fill out all locations and select an item category.');
+                return;
+            }
+
+            showToast('Searching for nearby delivery partners... 🛵');
+            setTimeout(() => {
+                showToast('Partner assigned! Arriving in 4 minutes.');
+                setTimeout(() => goHome(), 2000);
+            }, 3000);
+        }
+
+        function renderMartItems(category) {
+            const buttons = document.querySelectorAll('.mart-cat-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText === category) {
+                    btn.className = 'mart-cat-btn active px-6 py-2.5 rounded-full font-bold text-sm bg-[#00f2fe]/20 text-[#00f2fe] border border-[#00f2fe]/50 whitespace-nowrap';
+                } else {
+                    btn.className = 'mart-cat-btn px-6 py-2.5 rounded-full font-bold text-sm bg-gray-800 text-gray-400 hover:text-white transition-colors whitespace-nowrap';
+                }
+            });
+
+            const grid = document.getElementById('mart-grid');
+            grid.innerHTML = '';
+
+            let items = martDatabase;
+            if (category !== 'All') {
+                items = martDatabase.filter(item => item.category === category);
+            }
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "bg-[#1a1c23] border border-gray-800 rounded-2xl p-4 hover:border-[#00f2fe] hover:shadow-[0_0_20px_rgba(0,242,254,0.1)] transition-all group flex flex-col h-full";
+                div.innerHTML = `
+                    <div class="relative w-full h-28 md:h-36 rounded-xl overflow-hidden mb-4 bg-[#12141d]">
+                        <img src="${item.img}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="flex-grow flex flex-col justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold mb-1">${item.weight}</p>
+                            <h4 class="text-white font-bold text-sm md:text-base leading-tight mb-2 line-clamp-2">${item.name}</h4>
+                        </div>
+                        <div class="flex items-center justify-between mt-auto pt-2">
+                            <span class="text-[#00f2fe] font-bold">₹${item.price}</span>
+                            <button onclick="addToCart(event, ${item.id})" class="bg-gray-800 border border-gray-700 text-[#00f2fe] px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-[#00f2fe] hover:text-[#12141d] transition-colors">ADD</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // --- Core Food Functions ---
+        function filterByCategory(category) {
+            const query = category.toLowerCase();
+
+            const matchedItems = foodDatabase.filter(item => {
+                const searchString = `${item.name} ${item.category} ${item.tags.join(' ')}`.toLowerCase();
+                return searchString.includes(query) || (query === 'ice cream' && searchString.includes('dessert'));
+            });
+
+            menuTitle.innerHTML = `Showing results for <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b00] to-[#c81d77]">"${category}"</span>`;
+            resetFilterBtn.classList.remove('hidden');
+            renderMenu(matchedItems);
+
+            document.getElementById('menu-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderMenu(restaurants) {
+            foodGrid.innerHTML = '';
+
+            if (restaurants.length === 0) {
+                foodGrid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                foodGrid.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+
+                restaurants.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'group relative cursor-pointer transition-transform hover:-translate-y-1 h-full';
+                    card.onclick = () => openRestaurant(item.id);
+
+                    let discountBanner = item.discount
+                        ? `<div class="absolute top-3 left-3 bg-gradient-to-r from-[#ff6b00] to-[#c81d77] text-white text-[11px] font-extrabold px-2.5 py-1 rounded-md shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-20 uppercase tracking-wider">${item.discount}</div>`
+                        : '';
+
+                    let subTag = '';
+                    if (currentSubscription === 'Silver') {
+                        subTag = `<div class="absolute top-3 right-3 bg-gray-300 text-gray-800 text-[10px] font-extrabold px-2 py-1 rounded shadow-md z-20 uppercase tracking-wider flex items-center gap-1"><svg class="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> Silver</div>`;
+                    } else if (currentSubscription === 'Gold') {
+                        subTag = `<div class="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[10px] font-extrabold px-2 py-1 rounded shadow-md z-20 uppercase tracking-wider flex items-center gap-1"><svg class="w-3 h-3 text-yellow-100" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> Gold</div>`;
+                    }
+
+                    const ratingColor = item.rating >= 4.0 ? 'bg-[#48c479]' : 'bg-[#db7c38]';
+
+                    card.innerHTML = `
+                        <div class="absolute -inset-0.5 bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-[20px] blur opacity-20 group-hover:opacity-50 transition duration-500 z-0"></div>
+                        <div class="relative p-[1.5px] bg-gradient-to-r from-[#ff6b00] via-[#c81d77] to-[#00f2fe] rounded-[20px] h-full z-10">
+                            <div class="bg-[#12141d] rounded-[18.5px] h-full pb-4 flex flex-col">
+                                <div class="relative w-full h-[180px] sm:h-[200px] rounded-t-[18.5px] overflow-hidden mb-3 flex-shrink-0">
+                                    <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" loading="lazy">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#12141d] to-transparent opacity-80"></div>
+                                    ${discountBanner}
+                                    ${subTag}
+                                </div>
+                                
+                                <div class="pt-2 px-4 relative flex-grow flex flex-col z-10">
+                                    <h3 class="text-[18px] font-bold text-white truncate tracking-tight mb-1">${item.name}</h3>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="flex items-center justify-center w-[18px] h-[18px] rounded-full ${ratingColor} text-white">
+                                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        </div>
+                                        <span class="font-bold text-gray-200 text-[15px]">${item.rating}</span>
+                                        <span class="text-gray-500 text-[12px]">•</span>
+                                        <span class="font-bold text-gray-200 text-[15px]">${item.time}</span>
+                                    </div>
+                                    <p class="text-gray-400 text-[14px] truncate mb-1">${item.category}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    foodGrid.appendChild(card);
+                });
+            }
+        }
+
+        function resetMenu() {
+            menuTitle.innerHTML = `Restaurants with online food delivery in Buchireddypalem, Nellore`;
+            resetFilterBtn.classList.add('hidden');
+            renderMenu(foodDatabase);
+        }
+
+        // --- Restaurant View Logic ---
+        function openRestaurant(id) {
+            currentRestaurantId = id;
+            currentFoodFilter = 'all';
+
+            const restaurant = foodDatabase.find(r => r.id === id);
+            if (!restaurant) return;
+
+            mainFoodView.classList.add('hidden');
+            offersViewSection.classList.add('hidden');
+
+            document.getElementById('rest-view-name').innerText = restaurant.name;
+            document.getElementById('rest-view-cuisines').innerText = restaurant.category;
+            document.getElementById('rest-view-rating').innerText = restaurant.rating;
+            document.getElementById('rest-view-time').innerText = restaurant.time;
+
+            renderRestaurantMenu(restaurant, currentFoodFilter);
+
+            restaurantViewSection.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            setTimeout(() => {
+                restaurantViewSection.classList.remove('opacity-0');
+            }, 50);
+        }
+
+        function closeRestaurant() {
+            currentRestaurantId = null;
+            restaurantViewSection.classList.add('opacity-0');
+
+            setTimeout(() => {
+                restaurantViewSection.classList.add('hidden');
+                mainFoodView.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        }
+
+        function applyFoodFilter(type) {
+            currentFoodFilter = type;
+
+            document.getElementById('filter-all').className = `px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-colors border ${type === 'all' ? 'bg-gray-800 text-white border-transparent' : 'bg-transparent text-gray-400 border-gray-700'}`;
+            document.getElementById('filter-veg').className = `px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-colors flex items-center gap-2 border ${type === 'veg' ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10' : 'bg-transparent text-gray-400 border-gray-700 hover:border-[#22c55e] hover:text-[#22c55e]'}`;
+            document.getElementById('filter-nonveg').className = `px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-colors flex items-center gap-2 border ${type === 'nonveg' ? 'border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10' : 'bg-transparent text-gray-400 border-gray-700 hover:border-[#ef4444] hover:text-[#ef4444]'}`;
+
+            if (currentRestaurantId) {
+                const restaurant = foodDatabase.find(r => r.id === currentRestaurantId);
+                renderRestaurantMenu(restaurant, currentFoodFilter);
+            }
+        }
+
+        function renderRestaurantMenu(restaurant, filterType) {
+            const container = document.getElementById('rest-menu-container');
+            container.innerHTML = '';
+
+            if (!restaurant.menu || restaurant.menu.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center py-10">Menu is currently unavailable.</p>`;
+                return;
+            }
+
+            let itemsToRender = restaurant.menu.filter(item => {
+                if (filterType === 'veg') return item.isVeg === true;
+                if (filterType === 'nonveg') return item.isVeg === false;
+                return true;
+            });
+
+            if (itemsToRender.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center py-10">No items found for the selected filter.</p>`;
+                return;
+            }
+
+            const categories = {};
+            itemsToRender.forEach(item => {
+                if (!categories[item.category]) categories[item.category] = [];
+                categories[item.category].push(item);
+            });
+
+            for (const [categoryName, items] of Object.entries(categories)) {
+                const section = document.createElement('div');
+                section.className = 'mb-10';
+
+                section.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-6 border-b border-gray-800 pb-2">${categoryName} <span class="text-gray-500 text-sm font-normal">(${items.length})</span></h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${items.map(item => {
+                    const iconHTML = item.isVeg ? `<span class="veg-icon"></span>` : `<span class="nonveg-icon"></span>`;
+                    return `
+                                <div class="flex justify-between p-4 md:p-5 bg-[#1a1c23] border border-gray-800 rounded-2xl hover:border-gray-600 transition-colors group relative h-40">
+                                    <div class="w-2/3 pr-4 flex flex-col">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            ${iconHTML}
+                                            <span class="text-white font-bold text-base md:text-lg leading-tight line-clamp-1">${item.name}</span>
+                                        </div>
+                                        <span class="text-gray-300 font-medium text-sm">₹${item.price}</span>
+                                        <p class="text-gray-500 text-xs mt-2 line-clamp-2">${item.desc}</p>
+                                    </div>
+                                    <div class="w-1/3 relative h-28 rounded-xl overflow-hidden bg-gray-800 flex-shrink-0">
+                                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                        <button onclick="addToCart(event, ${item.id})" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-[#1a1c23] text-[#48c479] font-bold border border-gray-700 shadow-lg rounded-lg px-6 py-1.5 text-[12px] uppercase z-30 hover:bg-[#282c3f] hover:text-[#5ce08c] transition-all">
+                                            ADD
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                }).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+        }
+
+        // --- Regular Live Search Logic ---
+        function openRegularSearch() {
+            const modal = document.getElementById('regular-search-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('regular-search-input').focus();
+            }, 10);
+        }
+
+        function closeRegularSearch() {
+            const modal = document.getElementById('regular-search-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('regular-search-input').value = '';
+                document.getElementById('live-search-results').classList.add('hidden');
+            }, 300);
+        }
+
+        function handleLiveSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('live-search-results');
+
+            if (!query) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            let matchedRests = [];
+            let matchedItemsList = [];
+            let matchedMartList = [];
+
+            // Search Food DB
+            foodDatabase.forEach(rest => {
+                let restMatched = false;
+                if (rest.name.toLowerCase().includes(query) || rest.category.toLowerCase().includes(query) || rest.tags.some(t => t.toLowerCase().includes(query))) {
+                    matchedRests.push(rest);
+                    restMatched = true;
+                }
+
+                if (rest.menu) {
+                    rest.menu.forEach(item => {
+                        if (item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query)) {
+                            matchedItemsList.push({ restaurant: rest, item: item });
+                        }
+                    });
+                }
+            });
+
+            // Search Mart DB
+            martDatabase.forEach(item => {
+                if (item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query)) {
+                    matchedMartList.push(item);
+                }
+            });
+
+            resultsContainer.innerHTML = '';
+            if (matchedRests.length === 0 && matchedItemsList.length === 0 && matchedMartList.length === 0) {
+                resultsContainer.innerHTML = `<div class="p-8 text-center text-gray-500 font-medium">No results found for "${query}"</div>`;
+            } else {
+                let html = '';
+
+                if (matchedRests.length > 0) {
+                    html += `<div class="px-5 py-3 bg-[#1a1c23] text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">Restaurants</div>`;
+                    matchedRests.slice(0, 3).forEach(r => {
+                        html += `
+                            <div onclick="closeRegularSearch(); openFoodView(); setTimeout(() => openRestaurant(${r.id}), 100);" class="flex items-center gap-4 p-4 hover:bg-[#1a1c23] cursor-pointer transition-colors border-b border-gray-800 last:border-0 group">
+                                <img src="${r.img}" class="w-14 h-14 rounded-lg object-cover group-hover:scale-105 transition-transform">
+                                <div>
+                                    <h4 class="text-white font-bold text-lg">${r.name}</h4>
+                                    <p class="text-sm text-gray-400">${r.category}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (matchedItemsList.length > 0) {
+                    html += `<div class="px-5 py-3 bg-[#1a1c23] text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800 border-t ${matchedRests.length > 0 ? 'border-t-gray-800' : ''}">Restaurant Dishes</div>`;
+                    matchedItemsList.slice(0, 3).forEach(m => {
+                        html += `
+                            <div class="flex items-center justify-between p-4 hover:bg-[#1a1c23] transition-colors border-b border-gray-800 last:border-0">
+                                <div class="flex items-center gap-4">
+                                    <img src="${m.item.img}" class="w-14 h-14 rounded-lg object-cover">
+                                    <div>
+                                        <h4 class="text-white font-bold">${m.item.name}</h4>
+                                        <p class="text-xs text-gray-400 mt-0.5">in ${m.restaurant.name}</p>
+                                        <p class="text-[#ff6b00] text-sm font-bold mt-0.5">₹${m.item.price}</p>
+                                    </div>
+                                </div>
+                                <button onclick="addToCart(event, ${m.item.id})" class="text-xs bg-[#1a1c23] border border-gray-700 text-[#48c479] px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-bold shadow-sm">ADD</button>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (matchedMartList.length > 0) {
+                    html += `<div class="px-5 py-3 bg-[#1a1c23] text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800 border-t ${(matchedRests.length > 0 || matchedItemsList.length > 0) ? 'border-t-gray-800' : ''}">BuddyMart Items</div>`;
+                    matchedMartList.slice(0, 3).forEach(m => {
+                        html += `
+                            <div class="flex items-center justify-between p-4 hover:bg-[#1a1c23] transition-colors border-b border-gray-800 last:border-0">
+                                <div class="flex items-center gap-4">
+                                    <img src="${m.img}" class="w-14 h-14 rounded-lg object-cover">
+                                    <div>
+                                        <h4 class="text-white font-bold">${m.name}</h4>
+                                        <p class="text-xs text-gray-400 mt-0.5">${m.weight}</p>
+                                        <p class="text-[#00f2fe] text-sm font-bold mt-0.5">₹${m.price}</p>
+                                    </div>
+                                </div>
+                                <button onclick="addToCart(event, ${m.id})" class="text-xs bg-[#1a1c23] border border-gray-700 text-[#00f2fe] px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-bold shadow-sm">ADD</button>
+                            </div>
+                        `;
+                    });
+                }
+                resultsContainer.innerHTML = html;
+            }
+            resultsContainer.classList.remove('hidden');
+        }
+
+        // --- Mock AI Logic ---
+        function handleAISearch(e) {
+            if (e) e.preventDefault();
+            const query = aiInput.value.trim().toLowerCase();
+
+            if (!query) return;
+
+            aiResultsContainer.classList.remove('hidden');
+            aiCardsGrid.innerHTML = '';
+            aiThinkingText.classList.remove('hidden');
+            aiResponseMessage.classList.add('hidden');
+
+            const submitBtn = aiSearchForm.querySelector('button');
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                const result = analyzeQuery(query);
+
+                aiThinkingText.classList.add('hidden');
+
+                if (result.message) {
+                    aiResponseMessage.innerHTML = result.message;
+                    aiResponseMessage.classList.remove('hidden');
+                }
+
+                renderNeonCards(result.items.slice(0, 3));
+
+                submitBtn.disabled = false;
+
+            }, 1200);
+        }
+
+        function renderNeonCards(restaurants) {
+            aiCardsGrid.innerHTML = '';
+            const standardGlow = 'from-[#ff6b00] via-[#c81d77] to-[#00f2fe]';
+
+            restaurants.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `relative p-[1.5px] rounded-xl bg-gradient-to-r ${standardGlow} transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer animate-fade-in`;
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.onclick = () => openRestaurant(item.id);
+
+                card.innerHTML = `
+                    <div class="absolute -inset-1 bg-gradient-to-r ${standardGlow} rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500 z-0"></div>
+                    <div class="bg-[#12141d] rounded-[10px] h-full flex flex-col overflow-hidden group relative z-10">
+                        <div class="relative h-36 overflow-hidden">
+                            <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#12141d] to-transparent"></div>
+                            <div class="absolute bottom-2 left-3 right-3 flex justify-between text-xs font-bold text-white z-10">
+                                <span><svg class="w-3 h-3 inline mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg> ${item.rating}</span>
+                                <span>${item.time}</span>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-white font-bold text-lg leading-tight uppercase tracking-wide drop-shadow-md mb-1">${item.name}</h3>
+                                <p class="text-[#a9abb3] text-sm truncate">${item.category}</p>
+                            </div>
+                            <button class="mt-4 w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-white text-sm font-bold uppercase transition-colors">
+                                View Menu
+                            </button>
+                        </div>
+                    </div>
+                `;
+                aiCardsGrid.appendChild(card);
+            });
+        }
+
+        function analyzeQuery(query) {
+            let matchedItems = [];
+            const q = query.toLowerCase();
+
+            let isSad = q.match(/(sad|depress|cry|breakup|down|low|bad|heartbreak|lonely|unhappy)/);
+            let isTired = q.match(/(exhaust|tired|sleepy|drain|fatigue|overwork)/);
+            let isHangry = q.match(/(hangry|angry|starv|mad|frustrat|stress)/);
+            let isHealthy = q.match(/(health|vegan|veg|gym|diet|light|salad|workout)/);
+            let isCelebrate = q.match(/(win|best|top|celebrat|happy|party|highest|good)/);
+            let isSpicy = q.match(/(spicy|hot|fire|burn)/);
+
+            let aiMessage = "I've looked around and found the perfect bites just for you! 😋<br><br>Eat up, take care of yourself, and turn this moment into pure joy. Bon appétit, sweetheart!";
+
+            if (isSad) {
+                aiMessage = "Oh, sweetheart, I'm so sorry you're feeling down. Let me wrap you in a big virtual hug and get you something warm to eat. 🫂<br><br>Just rest your head tonight, get some sweet sleep, and remember how much you are loved. Tomorrow will be brighter. ✨";
+            } else if (isTired) {
+                aiMessage = "You've been working so hard, honey. Put your feet up and leave the cooking to me tonight. 🛋️<br><br>Eat a good, warm meal, rest those tired eyes, and just let yourself recharge. I'm so proud of you. 🔋";
+            } else if (isHangry) {
+                aiMessage = "Take a deep breath, my dear. I know it's a stressful day, but let's get some good food in your tummy first. 🍔<br><br>Everything always feels a little more manageable and a lot less heavy after a hearty meal.";
+            } else if (isCelebrate) {
+                aiMessage = "I am so incredibly proud of you! 🎉 You deserve the absolute best to celebrate this wonderful moment.<br><br>Treat yourself to something special tonight, sweetheart. You've earned every bit of this joy!";
+            } else if (isHealthy) {
+                aiMessage = "Look at you taking such wonderful care of yourself! 🌿 I love seeing you eat fresh and healthy.<br><br>Fuel that beautiful body of yours with these greens, and keep up that amazing energy, honey.";
+            } else if (isSpicy) {
+                aiMessage = "Craving a little kick today? 🔥 Let's wake up those tastebuds and bring a big, bright smile to your face!<br><br>Eat up, enjoy every fiery bite, and let it wash all the dullness of the day away.";
+            }
+
+            foodDatabase.forEach(item => {
+                const searchString = `${item.name} ${item.category} ${item.tags.join(' ')}`.toLowerCase();
+
+                if (
+                    (isSpicy && searchString.includes('spicy')) ||
+                    (isHealthy && searchString.includes('health')) ||
+                    (isSad && (searchString.includes('dessert') || searchString.includes('pizza') || searchString.includes('sweet') || searchString.includes('ice cream'))) ||
+                    ((isHangry || isTired) && (searchString.includes('burger') || searchString.includes('meat') || searchString.includes('heavy') || searchString.includes('biryani'))) ||
+                    (!isSpicy && !isHealthy && !isSad && !isHangry && !isTired && searchString.includes(q.replace(/best|top|highest|find|me|the|i|am|feeling/g, '').trim()))
+                ) {
+                    matchedItems.push(item);
+                }
+            });
+
+            if (matchedItems.length === 0 && !isCelebrate && !isSpicy && !isHealthy && !isSad && !isHangry && !isTired) {
+                matchedItems = foodDatabase.filter(item => item.rating >= 4.4);
+            } else if (matchedItems.length === 0) {
+                return {
+                    message: "I couldn't find an exact match, but please know I'm still cheering you on! ✨<br><br>Here are some highly-rated restaurants nearby that are guaranteed to put a smile on your face.",
+                    items: foodDatabase.filter(item => item.rating >= 4.4)
+                };
+            }
+
+            if (isCelebrate || q.includes('best') || q.includes('top')) {
+                matchedItems.sort((a, b) => b.rating - a.rating);
+            }
+
+            return { message: aiMessage, items: matchedItems };
+        }
+
+        // --- Cart System & Checkout ---
+        function toggleCart() {
+            const isHidden = cartDrawer.classList.contains('translate-x-full');
+            if (isHidden) {
+                cartBackdrop.classList.remove('hidden');
+                setTimeout(() => cartBackdrop.classList.remove('opacity-0'), 10);
+                cartDrawer.classList.remove('translate-x-full');
+                updateCartUI();
+            } else {
+                cartDrawer.classList.add('translate-x-full');
+                cartBackdrop.classList.add('opacity-0');
+                setTimeout(() => cartBackdrop.classList.add('hidden'), 300);
+            }
+        }
+
+        function addToCart(e, itemId) {
+            e.stopPropagation();
+
+            let foundItem = null;
+            for (let i = 0; i < foodDatabase.length; i++) {
+                if (foodDatabase[i].menu) {
+                    let match = foodDatabase[i].menu.find(m => m.id === itemId);
+                    if (match) {
+                        foundItem = match;
+                        break;
+                    }
+                }
+            }
+
+            if (!foundItem) {
+                let match = martDatabase.find(m => m.id === itemId);
+                if (match) {
+                    foundItem = match;
+                }
+            }
+
+            if (foundItem) {
+                const existingItem = cartItems.find(ci => ci.id === itemId);
+                if (existingItem) {
+                    existingItem.qty += 1;
+                } else {
+                    cartItems.push({ ...foundItem, qty: 1 });
+                }
+            }
+
+            cartCount = cartItems.reduce((acc, curr) => acc + curr.qty, 0);
+            cartCountBadge.innerText = cartCount;
+            cartCountBadge.classList.add('scale-125');
+            setTimeout(() => cartCountBadge.classList.remove('scale-125'), 200);
+
+            showToast("Item added to cart successfully!");
+        }
+
+        function updateCartQty(id, delta) {
+            const index = cartItems.findIndex(ci => ci.id === id);
+            if (index !== -1) {
+                cartItems[index].qty += delta;
+                if (cartItems[index].qty <= 0) {
+                    cartItems.splice(index, 1);
+                }
+            }
+            cartCount = cartItems.reduce((acc, curr) => acc + curr.qty, 0);
+            cartCountBadge.innerText = cartCount;
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            cartItemsContainer.innerHTML = '';
+
+            if (cartItems.length === 0) {
+                cartItemsContainer.appendChild(emptyCartMsg);
+                emptyCartMsg.classList.remove('hidden');
+                cartSubtotalEl.innerText = '₹0';
+                cartTotalEl.innerText = '₹0';
+                cartDeliveryFeeEl.innerText = currentSubscription ? 'Free' : '₹40';
+                if (currentSubscription) cartDeliveryFeeEl.classList.add('text-[#48c479]');
+                else cartDeliveryFeeEl.classList.remove('text-[#48c479]');
+
+                discountRow.classList.add('hidden');
+                discountApplied = { amount: 0, isPercentage: false, freeDelivery: false, code: '' };
+                return;
+            }
+
+            emptyCartMsg.classList.add('hidden');
+            let subtotal = 0;
+
+            cartItems.forEach(item => {
+                subtotal += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = "flex gap-4 p-3 rounded-xl bg-[#1a1c23] border border-gray-800";
+
+                let iconHTML = '';
+                if (item.isVeg === true) iconHTML = `<span class="veg-icon w-3 h-3 text-[0px] mr-1"></span>`;
+                else if (item.isVeg === false) iconHTML = `<span class="nonveg-icon w-3 h-3 text-[0px] mr-1"></span>`;
+                else iconHTML = `<span class="text-xs mr-1">🛒</span>`;
+
+                div.innerHTML = `
+                    <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-[#12141d]">
+                        <img src="${item.img || item.imgUrl}" class="w-full h-full object-cover" alt="${item.name}">
+                    </div>
+                    <div class="flex-grow flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-white font-bold text-sm leading-tight flex items-start gap-1">
+                                ${iconHTML} <span class="line-clamp-1">${item.name}</span>
+                            </h4>
+                            <p class="text-[#00f2fe] text-xs mt-1">₹${item.price}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-white font-bold text-sm">₹${item.price * item.qty}</span>
+                            <div class="flex items-center gap-3 bg-[#0f1115] rounded-lg px-2 py-1 border border-gray-700">
+                                <button onclick="updateCartQty(${item.id}, -1)" class="text-macho-orange font-bold text-lg hover:text-white px-1">-</button>
+                                <span class="text-white text-xs font-bold w-4 text-center">${item.qty}</span>
+                                <button onclick="updateCartQty(${item.id}, 1)" class="text-[#48c479] font-bold text-lg hover:text-white px-1">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(div);
+            });
+
+            let deliveryFee = 40;
+            const platformFee = 5;
+            let discountValue = 0;
+
+            if (currentSubscription || discountApplied.freeDelivery) {
+                deliveryFee = 0;
+            }
+
+            if (discountApplied.code) {
+                if (discountApplied.isPercentage) {
+                    discountValue = Math.round(subtotal * (discountApplied.amount / 100));
+                } else {
+                    discountValue = discountApplied.amount;
+                }
+
+                discountRow.classList.remove('hidden');
+                cartDiscountEl.innerText = `-₹${discountValue}`;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+
+            let total = subtotal + deliveryFee + platformFee - discountValue;
+            if (total < 0) total = 0;
+
+            cartSubtotalEl.innerText = `₹${subtotal}`;
+            cartTotalEl.innerText = `₹${total}`;
+
+            if (deliveryFee === 0) {
+                cartDeliveryFeeEl.innerHTML = `<span class="text-[#48c479] font-bold">Free</span> <span class="text-xs text-gray-500 line-through ml-1">₹40</span>`;
+            } else {
+                cartDeliveryFeeEl.innerText = '₹40';
+            }
+        }
+
+        function applyCoupon(e) {
+            e.preventDefault();
+            const input = document.getElementById('coupon-input');
+            const code = input.value.trim().toUpperCase();
+
+            if (code === 'BYTE50') {
+                discountApplied = { amount: 50, isPercentage: false, freeDelivery: false, code: 'BYTE50' };
+                input.value = '';
+                showToast("Awesome! ₹50 coupon applied.");
+                updateCartUI();
+            } else if (code === 'WELCOME20') {
+                discountApplied = { amount: 20, isPercentage: true, freeDelivery: false, code: 'WELCOME20' };
+                input.value = '';
+                showToast("Awesome! 20% OFF coupon applied.");
+                updateCartUI();
+            } else if (code === 'BUCHISPECIAL') {
+                discountApplied = { amount: 0, isPercentage: false, freeDelivery: true, code: 'BUCHISPECIAL' };
+                input.value = '';
+                showToast("Awesome! Free Delivery applied.");
+                updateCartUI();
+            } else {
+                showToast("Invalid coupon code.");
+            }
+        }
+
+        function processCheckout() {
+            if (cartItems.length === 0) {
+                showToast("Your cart is empty!");
+                return;
+            }
+
+            if (!isLoggedIn) {
+                toggleCart();
+                openAuthModal();
+                return;
+            }
+
+            toggleCart();
+            paymentContext = { type: 'cart' };
+            const currentTotal = cartTotalEl.innerText;
+            paymentAmount.innerText = currentTotal;
+            paymentModal.classList.remove('hidden');
+            setTimeout(() => paymentModal.classList.remove('opacity-0'), 10);
+        }
+
+        function initiateSubscription(tier, price) {
+            paymentContext = { type: 'subscription', tier: tier };
+            paymentAmount.innerText = `₹${price}`;
+            paymentModal.classList.remove('hidden');
+            setTimeout(() => paymentModal.classList.remove('opacity-0'), 10);
+        }
+
+        function closePaymentModal() {
+            paymentModal.classList.add('opacity-0');
+            setTimeout(() => paymentModal.classList.add('hidden'), 300);
+        }
+
+        function confirmPayment() {
+            closePaymentModal();
+
+            if (paymentContext.type === 'subscription') {
+                activateSubscription(paymentContext.tier);
+                return;
+            }
+
+            cartItems = [];
+            cartCount = 0;
+            discountApplied = { amount: 0, isPercentage: false, freeDelivery: false, code: '' };
+            discountRow.classList.add('hidden');
+            cartCountBadge.innerText = 0;
+            updateCartUI();
+
+            toast.classList.replace('bg-[#48c479]', 'bg-gradient-to-r');
+            toast.classList.add('from-[#ff6b00]', 'to-[#c81d77]');
+            showToast("Payment Successful! Your food is on the way 🎉");
+            setTimeout(() => {
+                toast.classList.replace('bg-gradient-to-r', 'bg-[#48c479]');
+                toast.classList.remove('from-[#ff6b00]', 'to-[#c81d77]');
+            }, 3000);
+        }
+
+        function activateSubscription(tier) {
+            currentSubscription = tier;
+
+            const badge = document.getElementById('profile-sub-badge');
+            badge.classList.remove('hidden', 'bg-gray-300', 'text-gray-800', 'bg-gradient-to-r', 'from-yellow-400', 'to-yellow-600', 'text-white');
+
+            const starIcon = `<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
+
+            if (tier === 'Silver') {
+                badge.classList.add('bg-gray-300', 'text-gray-800');
+                badge.innerHTML = `${starIcon} Silver`;
+            } else {
+                badge.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-yellow-600', 'text-white');
+                badge.innerHTML = `${starIcon} Gold`;
+            }
+
+            renderMenu(foodDatabase);
+            updateCartUI();
+            populateFavorites();
+
+            toast.classList.replace('bg-[#48c479]', 'bg-gradient-to-r');
+            toast.classList.add('from-yellow-400', 'to-yellow-600');
+            showToast(`Welcome to ${tier} Membership! Delivery is now FREE. 🎉`);
+            setTimeout(() => {
+                toast.classList.replace('bg-gradient-to-r', 'bg-[#48c479]');
+                toast.classList.remove('from-yellow-400', 'to-yellow-600');
+            }, 3000);
+        }
+
+        function showToast(msg) {
+            toastMessage.innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // --- Auth & OTP Logic ---
+        function openAuthModal() {
+            if (authBtnText.innerText === 'My Profile') return;
+            authModal.classList.remove('hidden');
+            setTimeout(() => {
+                authModal.classList.remove('opacity-0');
+                mobileNumberInput.focus();
+            }, 10);
+        }
+
+        function closeAuthModal() {
+            authModal.classList.add('opacity-0');
+            setTimeout(() => {
+                authModal.classList.add('hidden');
+                resetAuthForms();
+            }, 300);
+        }
+
+        function handleSendOTP(e) {
+            e.preventDefault();
+            const num = mobileNumberInput.value;
+            phoneForm.classList.add('hidden');
+            otpForm.classList.remove('hidden');
+            authSubtitle.innerHTML = `We've sent an OTP to <span class="font-bold text-white">+91 ${num}</span>`;
+            setTimeout(() => otpInputs[0].focus(), 50);
+        }
+
+        function handleVerifyOTP(e) {
+            e.preventDefault();
+            closeAuthModal();
+
+            isLoggedIn = true;
+            currentUserPhone = mobileNumberInput.value;
+
+            document.getElementById('profile-phone').innerText = `+91 ${currentUserPhone}`;
+
+            showToast("Successfully logged in! Welcome to ByteBuddy.");
+
+            authBtnText.innerText = 'My Profile';
+            const authIcon = document.querySelector('#auth-btn svg');
+            authIcon.innerHTML = `<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>`;
+            authIcon.setAttribute('fill', 'currentColor');
+            authIcon.setAttribute('stroke', 'none');
+
+            mobileAuthText.innerText = 'My Profile';
+            const mobileAuthIcon = document.querySelector('#mobile-auth-btn svg');
+            mobileAuthIcon.innerHTML = `<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>`;
+            mobileAuthIcon.setAttribute('fill', 'currentColor');
+            mobileAuthIcon.setAttribute('stroke', 'none');
+        }
+
+        // --- Mobile Menu Handlers ---
+        function toggleMobileMenu() {
+            const isHidden = mobileMenuDrawer.classList.contains('-translate-x-full');
+            if (isHidden) {
+                mobileMenuBackdrop.classList.remove('hidden');
+                setTimeout(() => mobileMenuBackdrop.classList.remove('opacity-0'), 10);
+                mobileMenuDrawer.classList.remove('-translate-x-full');
+            } else {
+                mobileMenuDrawer.classList.add('-translate-x-full');
+                mobileMenuBackdrop.classList.add('opacity-0');
+                setTimeout(() => mobileMenuBackdrop.classList.add('hidden'), 300);
+            }
+        }
+
+        function handleMobileUserAction() {
+            toggleMobileMenu();
+            setTimeout(() => {
+                handleUserAction();
+            }, 300);
+        }
+
+        // --- User Action Handler ---
+        function handleUserAction() {
+            if (isLoggedIn) {
+                openProfile();
+            } else {
+                openAuthModal();
+            }
+        }
+
+        // --- Profile Logic ---
+        function openProfile() {
+            mainFoodView.classList.add('hidden');
+            restaurantViewSection.classList.add('hidden');
+            homeLandingSection.classList.add('hidden');
+            buddymartViewSection.classList.add('hidden');
+            buddygoViewSection.classList.add('hidden');
+            offersViewSection.classList.add('hidden');
+
+            profileSection.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            setTimeout(() => {
+                profileSection.classList.remove('opacity-0');
+            }, 50);
+
+            populateFavorites();
+        }
+
+        function closeProfile() {
+            profileSection.classList.add('opacity-0');
+
+            setTimeout(() => {
+                profileSection.classList.add('hidden');
+                goHome();
+            }, 300);
+        }
+
+        function switchProfileTab(tabId) {
+            tabs.forEach(tab => {
+                tab.classList.remove('active-tab', 'bg-[#1a1c23]', 'text-white', 'border-gray-700');
+                tab.classList.add('text-gray-400', 'border-transparent');
+            });
+            event.currentTarget.classList.add('active-tab', 'bg-[#1a1c23]', 'text-white', 'border-gray-700');
+            event.currentTarget.classList.remove('text-gray-400', 'border-transparent');
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        }
+
+        function populateFavorites() {
+            const favGrid = document.getElementById('favorites-grid');
+            favGrid.innerHTML = '';
+            const favorites = foodDatabase.slice(0, 2);
+
+            favorites.forEach(item => {
+                let subTag = '';
+                if (currentSubscription === 'Silver') {
+                    subTag = `<div class="absolute top-1 left-1 bg-gray-300 text-gray-800 text-[8px] font-extrabold px-1 py-0.5 rounded shadow-md z-20 uppercase tracking-wider">Silver</div>`;
+                } else if (currentSubscription === 'Gold') {
+                    subTag = `<div class="absolute top-1 left-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[8px] font-extrabold px-1 py-0.5 rounded shadow-md z-20 uppercase tracking-wider">Gold</div>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "flex gap-4 p-4 rounded-xl bg-[#1a1c23] border border-gray-800 relative overflow-hidden group cursor-pointer";
+                div.onclick = () => {
+                    profileSection.classList.add('hidden');
+                    openFoodView();
+                    setTimeout(() => openRestaurant(item.id), 100);
+                };
+                div.innerHTML = `
+                    <div class="absolute top-2 right-2 text-[#c81d77]">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 relative">
+                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" alt="${item.name}">
+                        ${subTag}
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h4 class="text-white font-bold">${item.name}</h4>
+                        <p class="text-gray-400 text-xs mt-1 mb-2">${item.category}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-[#00f2fe] font-bold text-sm flex items-center gap-1"><svg class="w-3 h-3 text-[#48c479]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> ${item.rating}</span>
+                            <button class="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-[#ff6b00] transition-colors font-bold">VIEW</button>
+                        </div>
+                    </div>
+                `;
+                favGrid.appendChild(div);
+            });
+        }
+
+        function updatePhoneNumber() {
+            const newPhone = document.getElementById('new-phone-input').value;
+            if (newPhone.length === 10) {
+                currentUserPhone = newPhone;
+                document.getElementById('profile-phone').innerText = `+91 ${currentUserPhone}`;
+                showToast("Phone number updated successfully!");
+                document.getElementById('change-phone-step-1').classList.remove('hidden');
+                document.getElementById('change-phone-step-2').classList.add('hidden');
+                document.getElementById('new-phone-input').value = '';
+            } else {
+                showToast("Please enter a valid number.");
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUserPhone = '';
+            currentSubscription = null;
+            document.getElementById('profile-sub-badge').classList.add('hidden');
+            renderMenu(foodDatabase);
+            updateCartUI();
+
+            authBtnText.innerText = 'Sign In';
+            const authIcon = document.querySelector('#auth-btn svg');
+            authIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>`;
+            authIcon.setAttribute('fill', 'none');
+            authIcon.setAttribute('stroke', 'currentColor');
+
+            mobileAuthText.innerText = 'Sign In';
+            const mobileAuthIcon = document.querySelector('#mobile-auth-btn svg');
+            mobileAuthIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>`;
+            mobileAuthIcon.setAttribute('fill', 'none');
+            mobileAuthIcon.setAttribute('stroke', 'currentColor');
+
+            showToast("You have been logged out.");
+            closeProfile();
+        }
+
+        function deleteAccount() {
+            const input = document.getElementById('delete-confirm-input');
+            if (input.value === 'DELETE') {
+                logout();
+                showToast("Account permanently deleted.");
+                input.value = '';
+            } else {
+                showToast("Please type DELETE to confirm.");
+            }
+        }
+
+        function resetAuthForms() {
+            phoneForm.classList.remove('hidden');
+            otpForm.classList.add('hidden');
+            authSubtitle.innerText = 'Enter your mobile number to proceed';
+            mobileNumberInput.value = '';
+            otpInputs.forEach(input => input.value = '');
+        }
+
+        // Setup Keyframe Animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+            .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+            #cart-count { transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        `;
+        document.head.appendChild(style);
+
+        init();
+
+    </script>
+</body>
+
+</html>
